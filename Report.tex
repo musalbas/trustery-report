@@ -1,0 +1,134 @@
+\documentclass[a4paper]{report}
+\usepackage{graphicx}
+\usepackage{filecontents}
+\graphicspath{{./images/}}
+
+\begin{filecontents*}{originality.sty}
+	\NeedsTeXFormat{LaTeX2e}
+	\ProvidesPackage{originality}
+	\newenvironment{originality}
+	{\renewcommand{\abstractname}{Originality Avowal}
+		\begin{abstract}}
+	{\end{abstract}
+		\clearpage}
+	\endinput
+\end{filecontents*}
+\usepackage{originality}
+
+\begin{filecontents*}{acknowledgements.sty}
+	\NeedsTeXFormat{LaTeX2e}
+	\ProvidesPackage{acknowledgements}
+	\newenvironment{acknowledgements}
+	{\renewcommand{\abstractname}{Acknowledgements}
+		\begin{abstract}}
+	{\end{abstract}
+		\clearpage}
+	\endinput
+\end{filecontents*}
+\usepackage{acknowledgements}
+
+\begin{document}
+	\begin{titlepage}
+		\centering
+		{\huge\bfseries Trusty: An Identity System Based on Smart Contracts on the Blockchain\par}
+		\vspace{1cm}
+		{\Large\scshape Final Project Report\par}
+		\vspace{1.5cm}
+		{\Large\itshape Mustafa Al-Bassam\par}
+		\vfill
+		{\LARGE\scshape King's College London\par}
+		\vfill
+		{\large \today\par}
+	\end{titlepage}
+	
+	\begin{abstract}
+		test
+	\end{abstract}
+	
+	\begin{acknowledgements}
+		test
+	\end{acknowledgements}
+	
+	\begin{originality}
+		test
+	\end{originality}
+	
+	\tableofcontents
+	
+	\chapter{Introduction}
+	\section{Motivation}
+	The secure operation of SSL/TLS relies on a set of trusted Certificate Authorities (CAs) to authenticate public keys\cite{1}.
+	
+	\section{Aims}
+	
+	\chapter{Background}
+	
+	\chapter{Requirements \& Specification}
+	\section{Brief}
+	The purpose of this project is to create a system hosted on the Ethereum blockchain and controlled by a smart contract, that allows entities to manage (such as storing, retrieving and verifying in a web-of-trust) identities of itself and other entities.
+	
+	An entity refers to any participant in the system and may be human or non-human, such as a person, organization or autonomous agent.
+	
+	An identity is a set of attributes about an entity such as cryptographic keys, names or addresses.
+	
+	\section{User Stories}
+	\begin{itemize}
+		\item As a user, I want to publicly publish attributes about myself (my identity) so that other users can act on them.
+		\item As a user, I want to search and retrieve attributes about other users so that I can act on them.
+		\item As a user, I want to sign attributes of other users so that other users are more likely to trust these attributes (for example if the other users also trust me).
+		\item As a user, I want to know which users trust the attributes of other users so that I can decide whether to trust these attributes or not.
+		\item As a user, I want to manage my personal list of trusted identities.
+		\item As a user, I want to publicly publish my PGP key as an attribute of my identity so that other users can encrypt to me.
+		\item As a user, I want to search and retrieve the PGP keys of other users so that I can encrypt to them.
+	\end{itemize}
+	
+	\section{Functional Requirements}
+	The functional requirements are categorized into two sections:
+	\begin{itemize}
+		\item The requirements for the smart contract on the blockchain. This represents the rules and the protocol of the system.
+		\item The requirements for the client that interacts with the blockchain using the rules of the smart contract.
+	\end{itemize}		
+	
+	\subsection{Smart Contract}
+	\begin{itemize}
+		\item Entities can publish attributes about themselves (their identity) on the blockchain.
+		\item Data associated with attributes may be stored off the blockchain (for example on IPFS or any arbitrary URI) and linked to from attributes.
+		\item Data associated with attributes that may be stored off the blockchain can have cryptographic hashes representing them published as part of the attributes in the blockchain.
+		\item Entities can sign attributes about entities and publish signatures on the blockchain.
+		\item Entities can revoke their own signatures published on the blockchain.
+		\item Signatures can have optional expiry dates.
+		\item If an attribute is a cryptographic key, an entity can publish cryptographic proof of ownership of the key on the blockchain. Proof of ownership proves that the entity that published the attribute has access to the private keys of a key.
+	\end{itemize}
+	
+	\subsection{Client}
+	\begin{itemize}
+		\item All of the actions that the smart contract allows can be performed by the client.
+		\item Users can search and retrieve attributes about entities (identities) from the blockchain.
+		\item Users can mark identities as trusted or untrusted in personal trust-stores.
+		\item Users can view a list of the trusted identities in their trust-store.
+		\item Whether an identity is trusted or not is reflected in the client when displaying identities.
+		\item The client can automatically verify the cryptographic proof of ownership of PGP key attributes associated with identities or their attributes.
+		\item Users can publish their PGP key and its associated cryptographic proof of ownership which is automatically generated by the client.
+		\item Where data associated with an attribute is stored off the blockchain, the client can automatically retrieve data that is stored using an IPFS or HTTP(S) URI and verify the data using its published cryptographic hash if necessary.
+	\end{itemize}
+	
+	\section{Non-functional Requirements}
+	\begin{itemize}
+		\item The system must be secure. Specifically, this means that:
+			\begin{itemize}
+				\item data in the blockchain cannot be modified in an unauthorized manner;
+				\item the integrity of data and attributes retrieved from the blockchain and off the blockchain must be verified by the client (such as the cryptographic hash of data stored off the blockchain and proof of ownership of cryptographic keys).
+			\end{itemize}
+		\item The system should be reliable. All actions of the smart contract can be performed regardless of the state of the system.
+		\item The client should be able to run on most common modern operating systems.
+		\item The financial cost of using the system resulting from blockchain transaction fees should be minimized.
+		\item The system should be scalable to many identities and attributes.
+	\end{itemize}
+	
+	\chapter{Design}
+	\section{Smart contract}
+	\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{"Trusty smart contract ER diagram"}
+	
+	\bibliographystyle{IEEEtran}
+	\bibliography{6ccs3prj}
+\end{document}
