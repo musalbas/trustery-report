@@ -30,7 +30,7 @@
 \begin{document}
 	\begin{titlepage}
 		\centering
-		{\huge\bfseries Trusty: An Identity System Based on Smart Contracts on the Blockchain\par}
+		{\huge\bfseries Trustery: An Identity System Based on Smart Contracts on the Blockchain\par}
 		\vspace{1cm}
 		{\Large\scshape Final Project Report\par}
 		\vspace{1.5cm}
@@ -57,7 +57,23 @@
 	
 	\chapter{Introduction}
 	\section{Motivation}
-	The secure operation of SSL/TLS relies on a set of trusted Certificate Authorities (CAs) to authenticate public keys\cite{1}.
+	The motivation for this project to build an identity system based on smart contracts on the blockchain arises from two problems, outlined in this section.
+	
+	\subsection{Centralisation and Security Weaknesses of PKI}
+	The secure operation of SSL/TLS relies on a set of trusted Certificate Authorities (CAs) to authenticate public keys\cite{1}. In practice, the set of trusted CAs are bundled into operating systems and web browsers. Therefore, the Public Key Infrastructure (PKI) is centralized as only CAs chosen by operating system and web browser vendors may issue globally valid certificates.
+
+	This system is exclusive; it is expensive and time-consuming to convince operating system and web browser vendors to bundle a CA, therefore entities must usually pay CAs to sign their public keys. For example, it typically takes over 11 months to apply for root CA inclusion in Mozilla products\cite{6}.
+	 
+	A major security weakness of this system is that every CA has the ability to issue rogue certificates for any entity. In 2011 the DigiNotar CA issued a rogue certificate for Google which was reported to be used in attempted man-in-the-middle attacks against Google users\cite{7}.
+
+	PGP is a data encryption and decryption standard that does not use CAs to verify the authenticity of public keys. Instead, it offers a feature that allows individuals to sign other individuals' public keys to certify their authenticity. This creates a web-of-trust model that can navigated to determine the authenticity of public keys belonging to individuals that have no pre-shared secret with each other.\cite{2}
+
+	The web-of-trust model is a first step towards a decentralized PKI. However, PGP itself is not a PKI as it does not provide a way to retrieve public keys. Commonly, PKI for PGP is implemented as centralized keyservers (such as pgp.mit.edu) that are used to query for public keys.
+
+	Ideally, a PKI for PGP would be be fully decentralized and not rely on centralized servers. Centralized keyservers act as a central point of failure that also allow for censorship, exclusion and alteration of keys by a third party.
+	
+	\subsection{Identity}
+	
 	
 	\section{Aims}
 	
@@ -103,7 +119,8 @@
 	\subsection{Client}
 	\begin{itemize}
 		\item All of the actions that the smart contract allows can be performed by the client.
-		\item Users can search and retrieve attributes about entities (identities) from the blockchain.
+		\item Users can search attributes about identities (entities) from the blockchain.
+		\item Users can retrieve attributes about identities from the blockchain.
 		\item Users can mark identities as trusted or untrusted in personal trust-stores.
 		\item Users can view a list of the trusted identities in their trust-store.
 		\item Whether an identity is trusted or not is reflected in the client when displaying identities.
