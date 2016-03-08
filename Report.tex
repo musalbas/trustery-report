@@ -1,6 +1,7 @@
 \documentclass[a4paper]{report}
 \usepackage{graphicx}
 \usepackage{filecontents}
+\usepackage{longtable}
 \graphicspath{{./images/}}
 
 \begin{filecontents*}{originality.sty}
@@ -59,7 +60,7 @@
 	\section{Motivation}
 	The motivation for this project to build an identity system based on smart contracts on the blockchain arises from two problems, outlined in this section.
 	
-	\subsection{Centralisation and Security Weaknesses of PKI}
+	\subsection{Centralisation and Security Weaknesses of Public Key Infrastructure}
 	The secure operation of SSL/TLS relies on a set of trusted Certificate Authorities (CAs) to authenticate public keys\cite{1}. In practice, the set of trusted CAs are bundled into operating systems and web browsers. Therefore, the Public Key Infrastructure (PKI) is centralized as only CAs chosen by operating system and web browser vendors may issue globally valid certificates.
 
 	This system is exclusive; it is expensive and time-consuming to convince operating system and web browser vendors to bundle a CA, therefore entities must usually pay CAs to sign their public keys. For example, it typically takes over 11 months to apply for root CA inclusion in Mozilla products\cite{6}.
@@ -73,11 +74,32 @@
 	Ideally, a PKI for PGP would be be fully decentralized and not rely on centralized servers. Centralized keyservers act as a central point of failure that also allow for censorship, exclusion and alteration of keys by a third party.
 	
 	\subsection{Identity}
+	The X.509 standard for certificates on the Internet provides scope for a wide range of identity attributes to be embedded in certificates.\cite{8} Identity attributes include information such as phone number, address and name. This provides a way for certificate authorities to vouch for the identity associations of an organization's online presence.
+	
+	Adapting this system in a web-of-trust PKI model as described above opens the door for a wide range of identity-related problems to be solved, in contexts where an organization or an individual needs to verify a fact about another organization or individual without trusting paper records that can easily be spoofed unlike cryptographic records.
+	
+	For example, when an employer needs to verify a potential employee's degree certification, the degree-awarding university can cryptographically sign a degree, and the branch of the government responsible for giving universities degree-awarding powers can cryptographically sign the university's degree-awarding certification. The employer only needs to search the webs-of-trust to trust the branch of the government that is responsible for giving universities degree-awarding powers, and work through the remaining chain-of-trust.
+	
+	Other examples could be verifying a company's shareholders and directors, verifying the visa of an traveller or verifying the driving license of a citizen.
+	
+	This not easily possible with the current X.509 certificate standard because the standard does not allow certificate authorities to sign specific and fine-grained attributes in a certificate; certificate authorities must sign the entire certificate or nothing.
 	
 	
 	\section{Aims}
+	The aim of this project is to materialize the decentralized public key infrastructure and identity management system as described above.
+	
+	Specifically, this project will create a system based on a smart contract on the Ethereum blockchain that will enable users to manage identities and attributes associated with identities, including cryptographic keys.
+	
+	The system will be decentralized and will allow users to sign and verify specific and fine-grained attributes of identities using a web-of-trust model.
 	
 	\chapter{Background}
+	\section{Blockchain}
+	\subsection{Smart Contracts}
+	\subsection{Ethereum}
+	\section{Public Key Infrastructure}
+	\subsection{Certificate Authorities}
+	\subsection{Web of Trust}
+	\section{Alternative Identity and Public Key Infrastructure systems}
 	
 	\chapter{Requirements \& Specification}
 	\section{Brief}
@@ -121,11 +143,14 @@
 		\item All of the actions that the smart contract allows can be performed by the client.
 		\item Users can search attributes about identities (entities) from the blockchain.
 		\item Users can retrieve attributes about identities from the blockchain.
+		\item Users can retrieve the signatures associated with an attribute.
+		\item Whether signatures are valid or not should be reflected in the client.
 		\item Users can mark identities as trusted or untrusted in personal trust-stores.
 		\item Users can view a list of the trusted identities in their trust-store.
 		\item Whether an identity is trusted or not is reflected in the client when displaying identities.
 		\item The client can automatically verify the cryptographic proof of ownership of PGP key attributes associated with identities or their attributes.
 		\item Users can publish their PGP key and its associated cryptographic proof of ownership which is automatically generated by the client.
+		\item Where data associated with an attribute is stored off the blockchain, the client can automatically publish attributes with data that is stored using an IPFS or HTTP(S) URI and generate a cryptographic hash associated with the data if necessary.
 		\item Where data associated with an attribute is stored off the blockchain, the client can automatically retrieve data that is stored using an IPFS or HTTP(S) URI and verify the data using its published cryptographic hash if necessary.
 	\end{itemize}
 	
@@ -141,6 +166,56 @@
 		\item The financial cost of using the system resulting from blockchain transaction fees should be minimized.
 		\item The system should be scalable to many identities and attributes.
 	\end{itemize}
+	
+	\section{Specification}
+	The below tables outline the specification for each of the requirements of the smart contract and client, and the non-functional requirements.	
+	
+	\subsection{Smart contract}
+	The smart contract is to be written in Solidity, a programming language for writing Ethereum smart contracts.
+	
+	\noindent \begin{longtable}{|p{5.5cm}|p{5.5cm}|}
+		\hline
+		\textbf{Requirement} & \textbf{Specification} \\ \hline
+		Entities can publish attributes about themselves (their identity) on the blockchain. & Identities are represented by Ethereum addresses. The smart contract will have an \textit{add attribute} transaction which will generate an \textit{add attribute} event with a unique attribute ID. \\ \hline
+		Data associated with attributes may be stored off the blockchain (for example on IPFS or any arbitrary URI) and linked to from attributes. & The \textit{add attribute} transaction will have a parameter for specifying data, that supports linking to data that is stored off the blockchain. \\ \hline
+		Data associated with attributes that may be stored off the blockchain can have cryptographic hashes representing them published as part of the attributes in the blockchain. & The \textit{add attribute} transaction will have a parameter for specifying a SHA256 hash. \\ \hline
+		Entities can sign attributes about entities and publish signatures on the blockchain. & The smart contract will have a \textit{sign attribute} transactionwhich will generate a \textit{sign attribute} event with a unique signature ID. \\ \hline
+		Entities can revoke their own signatures published on the blockchain. & The smart contract will have a \textit{revoke signature} transaction which will generate an \textit{revoke signature} event with a unique revocation ID. \\ \hline
+		Signatures can have optional expiry dates. & The \textit{sign attribute} transaction will have a parameter to specify an expiry date. \\ \hline
+		If an attribute is a cryptographic key, an entity can publish cryptographic proof of ownership of the key on the blockchain. Proof of ownership proves that the entity that published the attribute has access to the private keys of a key. & The \textit{add attribute} transaction will have a boolean parameter to flag that a cryptographic proof is attached to the data of the attribute. \\ \hline
+	\end{longtable}
+	
+	\subsection{Client}
+	The client is to be implemented as a command-line text-based console application written in Python.
+	
+	\noindent \begin{longtable}{|p{5.5cm}|p{5.5cm}|}
+		\hline
+		\textbf{Requirement} & \textbf{Specification} \\ \hline
+		All of the actions that the smart contract allows can be performed by the client. & There will be console commands for adding attributes, signing attributes and revoking signatures. The commands will take input from the user and form the parameters for each transaction, and communicate with the Ethereum JSON RPC to send the transactions. \\ \hline
+		Users can search attributes about identities (entities) from the blockchain. & There will be a console command for searching attributes. The command will take input from the user about the parameters to filter the attributes by, and communicate with the Ethereum JSON RPC to filter event logs of added attributes. \\ \hline
+		Users can retrieve attributes about identities from the blockchain. & There will be a console command for retrieving attributes based on the attribute's ID, which will communicate with the Ethereum JSON RPC to filter a single attribute by its ID. \\ \hline
+		Users can retrieve the signatures associated with an attribute. & The command for retrieving attributes will also retrieve and display the attribute's signatures by filtering signatures with the attribute's ID using the Ethereum JSON RPC. \\ \hline
+		Whether signatures are valid or not should be reflected in the client. & The client will check the expiry date associated with each signature and search the event logs for revocations associated with each signature using the Ethereum JSON RPC. \\ \hline
+		Users can mark identities as trusted or untrusted in personal trust-stores. & There will be a console command to add and remove Ethereum addresses from the list of trusted identities, which will be stored in a local file. \\ \hline
+		Users can view a list of the trusted identities in their trust-store. & There will be a console command that displays the list of trusted identities. \\ \hline
+		Whether an identity is trusted or not is reflected in the client when displaying identities. & Each Ethereum address displayed by the various console commands will have an indicator next to it when it is found in the trust-store. \\ \hline
+		The client can automatically verify the cryptographic proof of ownership of PGP key attributes associated with identities or their attributes. & When a PGP attribute is retrieved, the client will invoke the local GPG binary to verify the signature associated with the attribute data. \\ \hline
+		Users can publish their PGP key and its associated cryptographic proof of ownership which is automatically generated by the client. & There will be a console command to publish PGP key attributes that invokes the local GPG binary to retrieve the PGP keys and generate signatures for cryptographic proofs of ownership. \\ \hline
+		Where data associated with an attribute is stored off the blockchain, the client can automatically publish attributes with data that is stored using an IPFS or HTTP(S) URI and generate a cryptographic hash associated with the data if necessary. & The add attribute console command will detect when a HTTP(S) URI is used as input for the data field of an attribute, and automatically download the data over HTTP and generate a SHA256 hash for the data. For IPFS URIs it is not necessary to generate a hash as IPFS URIs include a hash. \\ \hline
+		Where data associated with an attribute is stored off the blockchain, the client can automatically retrieve data that is stored using an IPFS or HTTP(S) URI and verify the data using its published cryptographic hash if necessary. & The retrieve attribute console command will detect when an IPFS or HTTP(S) URI populates the data field of an attribute, automatically download the data over IPFS or HTTP and verify the SHA256 hash associated with the data in the case of HTTP(S) URIs. \\ \hline
+	\end{longtable}
+	
+	\subsection{Non-functional requirements}	
+	\begin{longtable}{|p{5.5cm}|p{5.5cm}|}
+		\hline
+		\textbf{Requirement} & \textbf{Specification} \\ \hline
+		Security: Data in the blockchain cannot be modified in an unauthorized manner. & This is enforced by the Ethereum protocol itself as miners validate all transactions before being included in blocks. \\ \hline
+		Security: The integrity of data and attributes retrieved from the blockchain and off the blockchain must be verified by the client (such as the cryptographic hash of data stored off the blockchain and proof of ownership of cryptographic keys). & The client will check that the SHA256 hash of data stored off the blockchain matches with the published hash. When a PGP attribute is retrieved, the client will invoke the local GPG binary to verify the signature associated with the attribute data. \\ \hline
+		The system should be reliable. All actions of the smart contract can be performed regardless of the state of the system. & The smart contract will be implemented so that each attribute is stored independently of each other. This is also partly a condition of the Ethereum protocol itself as each smart contract has a state that is independent of other smart contracts. \\ \hline
+		The client should be able to run on most common modern operating systems. & The client will be implemented in Python, which is a cross-platform language. \\ \hline
+		The financial cost of using the system resulting from blockchain transaction fees should be minimized. & The smart contract will be implemented in a way that uses the least operations and stores the least data possible on the blockchain so that the gas price of each transaction is minimized. \\ \hline
+		The system should be scalable to many identities and attributes. & The Ethereum JSON RPC allows for events to be filtered by specified indexed parameters such attribute ID, attribute owner, etc. \\ \hline
+	\end{longtable}
 	
 	\chapter{Design}
 	\section{Smart contract}
