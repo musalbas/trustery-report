@@ -1,8 +1,13 @@
 \documentclass[a4paper]{report}
-\usepackage{graphicx}
+\ifx\pdftexversion\undefined
+	\usepackage[dvips]{graphicx}
+\else
+	\usepackage[pdftex]{graphicx}
+	\DeclareGraphicsRule{*}{mps}{*}{}
+\fi
 \usepackage{filecontents}
 \usepackage{longtable}
-\graphicspath{{./images/}}
+\graphicspath{{./figures/}}
 
 \begin{filecontents*}{originality.sty}
 	\NeedsTeXFormat{LaTeX2e}
@@ -92,16 +97,23 @@
 	
 	The system will be decentralized and will allow users to sign and verify specific and fine-grained attributes of identities using a web-of-trust model.
 	
-	\chapter{Background}
+	\chapter{Background review}
 	\section{Blockchain}
-	The	concept of the blockchain was introduced in 2008 by Satoshi Nakamoto in the Bitcoin electronic cash system.\cite{9} The Bitcoin paper describes a process of timestamping transactions by "by hashing them into an ongoing chain of hash-based proof-of-work, forming a record that cannot be changed without redoing the proof-of-work". Each Bitcoin transaction references other transactions (called inputs) and creates outputs, which are recorded on the Bitcoin blockchain. The Bitcoin in these outputs can then be "spent" by other transactions.
+	The	concept of the blockchain was introduced in 2008 by Satoshi Nakamoto in the Bitcoin electronic cash system.\cite{9} Bitcoin is designed as a peer-to-peer network where nodes running the Bitcoin software relay transactions to other nodes. To prevent cash from being double spent, the network reaches a consensus on the ordering of transactions by recording them on the blockchain; the Bitcoin paper describes a process of timestamping transactions by "hashing them into an ongoing chain of hash-based proof-of-work, forming a record that cannot be changed without redoing the proof-of-work".
 	
-	To facilitate the creation of transactions, Bitcoin has a transaction scripting language that is used to specify "locking scripts" for specifying conditions that must be met to spend transaction outputs.
+	In the Bitcoin network the proof-of-work involves repeatedly hashing blocks of incoming transactions until a hash is found that begins with a certain number of zero bits. This requires CPU power, and so as long as the majority of the CPU power on the network is not controlled by a central authority, a central authority cannot modify the blockchain and reverse transactions. This is because the consensus rule of the network is such that the blockchain with the biggest number of blocks is the correct one, and so an authority that does not have the majority of the network's CPU power is unlikely to outpace the creation of blocks of the rest of the network.
 	
-	Since the invention of Bitcoin, other forms of blockchain-based systems have emerged that extend the scripting language beyond the purpose of a cash system, to allow for other types of applications to be expressed on the blockchain in the form of "smart contracts".
+	Each Bitcoin transaction references other transactions (called inputs) and creates outputs, which are recorded on the Bitcoin blockchain. The Bitcoin in these outputs can then be "spent" by other transactions. To facilitate the creation of transactions, Bitcoin has a transaction scripting language that is used to specify "locking scripts" for specifying conditions that must be met to spend transaction outputs.
 	
-	\subsection{Smart Contracts}
-	\subsection{Ethereum}
+	The peer-to-peer nature of the Bitcoin blockchain and the fact that it is designed so that it is computationally expensive (and hence theoretically economically unattractive) for a central authority to take control of the blockchain and reverse transactions makes it a suitable tool to satisfy the decentralized aim of this project.
+	
+	The idea of this project is therefore to exploit the decentralized data storage and consensus capabilities of the blockchain to store identities and keys for a public key infrastructure, rather than transactions for a cash system.
+	
+	\subsection{Smart Contracts and Ethereum}
+	Since the invention of Bitcoin, other forms of blockchain-based systems have emerged that extend the scripting language beyond the purpose of a cash system, to allow for other types of applications to be expressed on the blockchain in the form of "smart contracts". 
+	
+	One such blockchain-based system for smart contracts is Ethereum. The Ethereum white paper describes smart contracts as "complex applications involving having digital assets being directly controlled by a piece of code implementing arbitrary rules".\cite{3}
+	
 	\section{Public Key Infrastructure}
 	\subsection{Certificate Authorities}
 	\subsection{Web of Trust}
@@ -225,7 +237,7 @@
 	
 	\chapter{Design}
 	\section{Smart contract}
-	\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{"Trusty smart contract ER diagram"}
+	\includegraphics{"smartcontract.1"}
 	
 	\bibliographystyle{IEEEtran}
 	\bibliography{6ccs3prj}

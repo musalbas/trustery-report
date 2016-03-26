@@ -9,4 +9,5 @@ acknowledgements.sty
 acknowledgments.sty
 mystyle.sty
 originality.sty
-texput.log
+*.log
+*.1
