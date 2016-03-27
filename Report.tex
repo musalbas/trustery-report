@@ -8,6 +8,7 @@
 \usepackage{filecontents}
 \usepackage{longtable}
 \graphicspath{{./figures/}}
+\newcommand{\code}{\texttt}
 
 \begin{filecontents*}{originality.sty}
 	\NeedsTeXFormat{LaTeX2e}
@@ -103,13 +104,13 @@
 	
 	In the Bitcoin network the proof-of-work involves repeatedly hashing blocks of incoming transactions until a hash is found that begins with a certain number of zero bits. This requires CPU power, and so as long as the majority of the CPU power on the network is not controlled by a central authority, a central authority cannot modify the blockchain and reverse transactions. This is because the consensus rule of the network is such that the blockchain with the biggest number of blocks is the correct one, and so an authority that does not have the majority of the network's CPU power is unlikely to outpace the creation of blocks of the rest of the network.
 	
-	Each Bitcoin transaction references other transactions (called inputs) and creates outputs, which are recorded on the Bitcoin blockchain. The Bitcoin in these outputs can then be "spent" by other transactions. To facilitate the creation of transactions, Bitcoin has a transaction scripting language that is used to specify "locking scripts" for specifying conditions that must be met to spend transaction outputs.\cite{10}
-	
 	The peer-to-peer nature of the Bitcoin blockchain and the fact that it is designed so that it is computationally expensive (and hence theoretically economically unattractive) for a central authority to take control of the blockchain and reverse transactions makes it a suitable tool to satisfy the decentralized aim of this project.
 	
 	The idea of this project is therefore to exploit the decentralized data storage and consensus capabilities of the blockchain to store identities and keys for a public key infrastructure, rather than transactions for a cash system.
 	
 	\subsection{Smart Contracts and Ethereum}
+	Each Bitcoin transaction references other transactions (called inputs) and creates outputs, which are recorded on the Bitcoin blockchain. The Bitcoin in these outputs can then be "spent" by other transactions. To facilitate the creation of transactions, Bitcoin has a transaction scripting language that is used to specify "locking scripts" for specifying conditions that must be met to spend transaction outputs.\cite{10}
+	
 	Since the invention of Bitcoin, other forms of blockchain-based systems have emerged that extend the scripting language beyond the purpose of a cash system, to allow for other types of applications to be expressed on the blockchain in the form of "smart contracts". 
 	
 	One such blockchain-based system for smart contracts is Ethereum. The Ethereum white paper describes smart contracts as "complex applications involving having digital assets being directly controlled by a piece of code implementing arbitrary rules".\cite{3}
@@ -239,6 +240,7 @@
 	\section{Smart contract}
 	The smart contract is the interface on the blockchain that sets the rules for the management and storage of identity attributes and keys, that users using the system must abide by.
 	
+	\subsection{Language}
 	Code for Ethereum smart contracts is written in Ethereum Virtual Machine (EVM) code, which is a low-level stack-based bytecode language.\cite{3}
 	
 	To facilitate the creation of Ethereum smart contracts, several high-level languages for Ethereum exist that are compiled down to EVM code. Two of the main ones are:
@@ -247,6 +249,17 @@
 		\item Serpent, a dynamically typed language with syntax similar to Python.\cite{12}
 	\end{itemize}
 	
+	Although the two languages are similar in that they are both high-level languages that compile down to EVM code, Solidity was chosen as the smart contract language for this project because it is statically typed.
+	
+	The fact that Solidity is statically typed means that smart contract code published on the blockchain is more likely to be bug-free as type constraints are enforced at compilation time instead of runtime.
+	
+	Statically typed smart contracts also allow for explicit control of sizes of data specified to contract methods and stored on the blockchain, which is useful for this particular project as the smart contract is intended for arbitrary types of data to specified for certain parameters and predictable types of data for other parameters.
+	
+	For example, the Serpent compiler command \code{serpent mk\_signature} shows that the Serpent compiler automatically sets variables to be of type \code{uint256} (integers of 256 bits) unless other explicitly stated. This would be inefficient for the storage of the cryptographic proof boolean flag specified in the project's smart contract specification, as the variable would be padded to 256 bits, therefore increasing the gas price of certain transactions in the system. One of the project's non-functional requirements is to minimize the financial cost of the system.
+	
+	It would therefore be advantageous to use a language where all types must be explicitly specified, because once a smart contract is published on the blockchain its code cannot be modified.
+	
+	\subsection{Entities}
 	\begin{figure}[!ht]
 		\centering
 			\includegraphics{"smartcontract.1"}
