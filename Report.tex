@@ -103,7 +103,7 @@
 	
 	In the Bitcoin network the proof-of-work involves repeatedly hashing blocks of incoming transactions until a hash is found that begins with a certain number of zero bits. This requires CPU power, and so as long as the majority of the CPU power on the network is not controlled by a central authority, a central authority cannot modify the blockchain and reverse transactions. This is because the consensus rule of the network is such that the blockchain with the biggest number of blocks is the correct one, and so an authority that does not have the majority of the network's CPU power is unlikely to outpace the creation of blocks of the rest of the network.
 	
-	Each Bitcoin transaction references other transactions (called inputs) and creates outputs, which are recorded on the Bitcoin blockchain. The Bitcoin in these outputs can then be "spent" by other transactions. To facilitate the creation of transactions, Bitcoin has a transaction scripting language that is used to specify "locking scripts" for specifying conditions that must be met to spend transaction outputs.
+	Each Bitcoin transaction references other transactions (called inputs) and creates outputs, which are recorded on the Bitcoin blockchain. The Bitcoin in these outputs can then be "spent" by other transactions. To facilitate the creation of transactions, Bitcoin has a transaction scripting language that is used to specify "locking scripts" for specifying conditions that must be met to spend transaction outputs.\cite{10}
 	
 	The peer-to-peer nature of the Bitcoin blockchain and the fact that it is designed so that it is computationally expensive (and hence theoretically economically unattractive) for a central authority to take control of the blockchain and reverse transactions makes it a suitable tool to satisfy the decentralized aim of this project.
 	
@@ -237,7 +237,24 @@
 	
 	\chapter{Design}
 	\section{Smart contract}
-	\includegraphics{"smartcontract.1"}
+	The smart contract is the interface on the blockchain that sets the rules for the management and storage of identity attributes and keys, that users using the system must abide by.
+	
+	Code for Ethereum smart contracts is written in Ethereum Virtual Machine (EVM) code, which is a low-level stack-based bytecode language.\cite{3}
+	
+	To facilitate the creation of Ethereum smart contracts, several high-level languages for Ethereum exist that are compiled down to EVM code. Two of the main ones are:
+	\begin{itemize}
+		\item Solidity, a statically typed language with syntax similar to JavaScript.\cite{11}
+		\item Serpent, a dynamically typed language with syntax similar to Python.\cite{12}
+	\end{itemize}
+	
+	\begin{figure}[!ht]
+		\centering
+			\includegraphics{"smartcontract.1"}
+		\caption{Entity-relationship diagram for the Trustery smart contract.}
+	\end{figure}
+	
+	\chapter{Implementation}
+	
 	
 	\bibliographystyle{IEEEtran}
 	\bibliography{6ccs3prj}
