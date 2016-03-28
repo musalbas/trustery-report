@@ -1,4 +1,4 @@
-\documentclass[a4paper]{report}
+\documentclass[12pt,a4paper]{report}
 \ifx\pdftexversion\undefined
 	\usepackage[dvips]{graphicx}
 \else
@@ -57,7 +57,13 @@
 	\end{acknowledgements}
 	
 	\begin{originality}
-		test
+		I verify that I am the sole author of this report, except for the content of this originality avowal and where explicitly stated to the contrary.
+		
+		I grant King's College London the right to make paper and electronic copies of the submitted work for purposes of marking, plagiarism detection and archival, and to upload a copy of the work to a trusted plagiarism detection service. I confirm this report does not exceed 25,000 words.
+		
+		\bigskip
+		\noindent Mustafa Al-Bassam\newline
+		\today
 	\end{originality}
 	
 	\tableofcontents
@@ -189,7 +195,7 @@
 	\section{Specification}
 	The below tables outline the specification for each of the requirements of the smart contract and client, and the non-functional requirements.	
 	
-	\subsection{Smart contract}
+	\subsection{Smart Contract}
 	The smart contract is to be written in Solidity, a programming language for writing Ethereum smart contracts.
 	
 	\noindent \begin{longtable}{|p{5.5cm}|p{5.5cm}|}
@@ -224,7 +230,7 @@
 		Where data associated with an attribute is stored off the blockchain, the client can automatically retrieve data that is stored using an IPFS or HTTP(S) URI and verify the data using its published cryptographic hash if necessary. & The retrieve attribute console command will detect when an IPFS or HTTP(S) URI populates the data field of an attribute, automatically download the data over IPFS or HTTP and verify the SHA256 hash associated with the data in the case of HTTP(S) URIs. \\ \hline
 	\end{longtable}
 	
-	\subsection{Non-functional requirements}	
+	\subsection{Non-functional Requirements}	
 	\begin{longtable}{|p{5.5cm}|p{5.5cm}|}
 		\hline
 		\textbf{Requirement} & \textbf{Specification} \\ \hline
@@ -260,11 +266,36 @@
 	It would therefore be advantageous to use a language where all types must be explicitly specified, because once a smart contract is published on the blockchain its code cannot be modified.
 	
 	\subsection{Entities}
+	Figure 4.1 shows the data entities and their constraints to be defined and manipulated in the smart contract. Solidity allows for the definition of \textit{structs}, a way to define data structures.\cite{13}
 	\begin{figure}[!ht]
 		\centering
 			\includegraphics{"smartcontract.1"}
 		\caption{Entity-relationship diagram for the Trustery smart contract.}
 	\end{figure}
+	
+	\bigskip
+	\noindent \textbf{\textit{Entity} entity}\newline
+	The \textit{entity} entity is not explicitly defined as a data structure in the smart contract. Instead, it is implicit to the implementation of Ethereum.
+	
+	Each Ethereum transaction has an owner, which is a 20-byte \textit{address} representing a cryptographic public key.\cite{3} For a transaction to be valid, its inputs must be signed using the private key associated with the owner's address.
+	
+	This makes an Ethereum address a good way to represent an \textit{entity} or a user of the system, as only those who have knowledge of an Ethereum address's private key are able to make transactions on behalf of that address such as adding and signing attributes.
+	
+	Attributes, signatures and revocations all have one owner entity. For revocations, this is implicit because signature revocations can only be made by the signers of the signatures. For signatures, the owner is referred to as the \textit{signer}.
+	
+	\bigskip
+	\noindent \textbf{Attribute entity}\newline
+	The attribute entity represents an attribute about an entity in the system.
+	
+	\bigskip
+	\noindent \textbf{Signature entity}\newline
+	
+	\bigskip
+	\noindent \textbf{Revocation entity}\newline
+	
+	\subsection{Methods and events}
+	
+	\section{Client}
 	
 	\chapter{Implementation}
 	
