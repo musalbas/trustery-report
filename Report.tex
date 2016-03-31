@@ -261,7 +261,7 @@
 	
 	Statically typed smart contracts also allow for explicit control of sizes of data specified to contract methods and stored on the blockchain, which is useful for this particular project as the smart contract is intended for arbitrary types of data to specified for certain parameters and predictable types of data for other parameters.
 	
-	For example, the Serpent compiler command \code{serpent mk\_signature} shows that the Serpent compiler automatically sets variables to be of type \code{uint256} (integers of 256 bits) unless other explicitly stated. This would be inefficient for the storage of the cryptographic proof boolean flag specified in the project's smart contract specification, as the variable would be padded to 256 bits, therefore increasing the gas price of certain transactions in the system. One of the project's non-functional requirements is to minimize the financial cost of the system.
+	For example, the Serpent compiler command \code{serpent mk\_signature} shows that the Serpent compiler automatically sets variables to be of type \code{uint256} (integers of 256 bits) unless other explicitly stated. This would be inefficient for the storage of the cryptographic proof boolean flag specified in the project's smart contract specification, as the variable would be padded to 256 bits\cite{14}, therefore increasing the gas price of certain transactions in the system. One of the project's non-functional requirements is to minimize the financial cost of the system.
 	
 	It would therefore be advantageous to use a language where all types must be explicitly specified, because once a smart contract is published on the blockchain its code cannot be modified.
 	
@@ -285,20 +285,69 @@
 	
 	\bigskip
 	\noindent \textbf{Attribute entity}\newline
-	The attribute entity represents an attribute about an entity in the system.
+	The attribute entity represents an attribute about an entity in the system. Its variables are as follows:
+	\begin{itemize}
+		\item \textbf{attributeID}, an unsigned integer that gives each attribute a unique identifier.
+		\item \textbf{owner}, an Ethereum address representing the owner of the attribute.
+		\item \textbf{attributeType}, a string representing the type of the attribute (such as PGP key or email address). This is a string of dynamic size to give users of the system the flexibility to define their own attribute types of varying lengths, while being efficient as strings are padded to multiples of 32 bytes\cite{14}.
+		\item \textbf{has\_proof}, a boolean to dictate to the client whether the attribute has a cryptographic proof and so can be considered an authentic attribute of an entity after the proof is verified. If the client understands how to verify the cryptographic proof for the attribute type, this enables the client to authenticate the attribute without relying on signatures in the web-of-trust.
+		
+		The reason for having this flag instead of allowing the client to simply check the attribute data for a proof is that if the attribute data is stored off the blockchain, it allows the client to know if the attribute has a cryptographic proof without downloading any extra data. If the attribute does not have a cryptographic proof this will save wasted time in downloading data only to find that there is no proof.
+		\item \textbf{identifier}, 32 bytes for specifying a searchable identifier for the data in the attribute. This is a 32 byte variable because indexed event parameters (more on that in the next subsection) in Ethereum over 32 bytes are hashed, and some Ethereum implementations do not currently correctly process indexed parameters over 32 bytes. Regardless, 32 bytes is sufficient for an identifier (for example, PGP fingerprints are 160 bits\cite{15}), and if this needs to be increased in the future long identifiers can be hashed client-side.
+		\item \textbf{data}, a string representing the actual data of the attribute. This is dynamic because the size of the data can vary greatly depending on the type of the attribute. This field can also be used to specify a off-blockchain URI to the location of the data.
+		\item \textbf{datahash}, a string representing a hash of the data of the attribute. This is optional and is intended to be used in cases where data is stored off the blockchain so that the integrity of the data can be verified. Although this is specified in this project as a SHA256 hash, this field is dynamic so that in the future the hashing algorithm can be changed without having to change the smart contract in case a major weakness in SHA256 is found.
+	\end{itemize}
 	
 	\bigskip
 	\noindent \textbf{Signature entity}\newline
+	This represents a signature of attribute with attribute ID \textbf{attributeID} by an Ethereum address \textbf{signer}. Each signature has its own unique ID \textbf{signatureID}.
+	
+	There is also an \textbf{expiry} field which is an unsigned integer representing the Epoch time when the signature should no longer be considered valid after. Epoch time was chosen as it is a timezone-insensitive way of defining a date.
 	
 	\bigskip
 	\noindent \textbf{Revocation entity}\newline
+	This represents a revocation of a signature with signature ID \textbf{signatureID}. Each revocation has its own revocation ID \textbf{revocationID}.
+	
+	As signatures can only be revoked by the entity that signed them, the Ethereum address that made the revocation can be easily be inferred from the signatureID.
+	
+	Note that signatures can have multiple revocations, even though that revoking a signature multiple times is redundant. This is because it would not be gas-efficient to add a condition in the smart contract to check if a signature has already been revoked, and as there is no harm in revoking a signature multiple times the client can ignore subsequent revocations.
 	
 	\subsection{Methods and events}
+	Ethereum smart contracts can have specified methods that can be executed to change the state of the data stored by the smart contract. Method parameters are passed in transactions signed by Ethereum addresses.
+	
+	In addition to methods, Ethereum has an event logging system. Ethereum methods can emit events to signify a change in the system. Events have parameters and indexed parameters. Ethereum provides APIs to make it easy to search and filter through events by specifying values for indexed parameters.
+	
+	Ethereum events can only have a maximum of three indexed parameters, called \textbf{topics}, so it is important to choose them wisely for each event.\cite{14}
+	
+	\bigskip
+	\noindent \textbf{Adding an attribute}\newline
+	The \textbf{addAttribute} method enables users to add new attributes to their identities. The method's parameters is all of the fields specified the \textbf{attribute} entity specified above, apart from the \textbf{owner} field.
+	
+	There is no need to include the \textbf{owner} field as a parameter because as all Ethereum method calls are transactions that are owned by Ethereum addresses, the address that is calling the method can be accessed directly from the smart contract without it being passed by the user as a method parameter.
+	
+	This method should emit an \textbf{AttributeAdded} event to signify that a new attribute has been added to the system. The parameters for the event should be the same as all the fields for the \textbf{attribute} entity, to allow the client to easily retrieve all the information about an attribute.
+	
+	The event should have three indexed parameters:
+	\begin{itemize}
+		\item \textbf{attributeID}, because it is important to be able to reference and therefore filter an attribute by its unique ID.
+		\item \textbf{owner}, to enable users to easily lookup a single entity or user.
+		\item \textbf{identifer}, because the purpose of this field is to provide a unique attribute-type-specific reference to an attribute.
+	\end{itemize}
+	
+	\bigskip
+	\noindent \textbf{Signing an attribute}\newline
+	The \textbf{signAttribute}
+	
+	\bigskip
+	\noindent \textbf{Revoking a signature}\newline
 	
 	\section{Client}
 	
 	\chapter{Implementation}
 	
+	\chapter{Evaluation}
+	
+	\chapter{Conclusion}
 	
 	\bibliographystyle{IEEEtran}
 	\bibliography{6ccs3prj}
