@@ -414,7 +414,29 @@
 	\subsection{Console}
 	
 	\subsection{Events and Transactions Managers}
-	The
+	The \textbf{events manager} is a singleton class that is responsible for retrieving and filtering events from Ethereum. It has methods for filtering attribute, signature and revocation events by their indexed parameters (as described in \textit{section 4.1.3}).
+	
+	The \textbf{transactions manager} is a singleton class that is responsible for sending transactions using Ethereum. It has methods for fulfilling the methods implemented in the smart contract, including adding attributes, signing attributes and revoking signatures.
+	
+	The reason for segmenting the two classes by receiving data and sending data from the Ethereum blockchain is because those two functions require inherently different initialization parameters. The events manager is only initialized by the address of the smart contract, and the transactions manager is initialized by the address of the smart contract and also an address belonging to the user.
+	
+	This means the transactions manager requires the client machine to have access to private keys for signing, whereas the events manager is read-only and so does not need access to any private keys.
+	
+	This is a useful segregation because it enables a client to be a read-only client if the user only wishes to retrieve attribute data to the blockchain but not publish any actual data.
+	
+	Furthermore, this also means that the user does not need to unlock their private key and enter their passphrase if the user is only executing read-only commands from the client such as searching for attributes, as read-only commands will only call the events manager class and not the transactions manager class.
+	
+	\bigskip
+	\noindent \textbf{Singleton design pattern}\newline
+	A singleton design pattern was chosen for the classes because each method that interacts with Ethereum requires access to the Trustery \textbf{contract translator} (from the \textbf{pyethereum package}), which provides a programmatic interface to the smart contract ABI and requires initialization. It would be more efficient to initialize the contract translator once for all the methods, as some commands may require multiple calls to methods that interact with Ethereum.
+	
+	\bigskip
+	\noindent \textbf{Alternative design}\newline
+	Alternatively, it would be possible to take a full object-orientated approach and abstract attributes, transactions and events as classes.
+	
+	This level of abstraction is not necessary due to the simplistic design of the console application. Each console command execution is isolated and starts the client process and exits on completion of the command. In addition, the client is only intended to be used by a single user.
+	
+	These facts combined mean that there is not a large number of attributes, transactions, events and objects with complicated relationships that the client needs to handle, and therefore a high level of object abstraction is not required.
 	
 	\subsection{Ethereum API Communicator}
 	
