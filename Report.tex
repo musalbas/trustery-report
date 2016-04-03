@@ -9,6 +9,7 @@
 \usepackage{longtable}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage{caption}
 \graphicspath{{./figures/}}
 \newcommand{\code}{\texttt}
 
@@ -248,6 +249,16 @@
 	\section{Smart contract}
 	The smart contract is the interface on the blockchain that sets the rules for the management and storage of identity attributes and keys, that users using the system must abide by.
 	
+	When designing a smart contract, it is important to appreciate all the small details such as the way data is stored and the data types used. This is for several reasons:
+	\begin{itemize}
+		\item The smart contract constitutes the core protocol, functionality and limitations of the whole system.
+		\item Once a smart contract is published and used, its code cannot be change. A lapse in judgement in the design of the smart contract can therefore be fatal.
+		\item Unlike traditional software, every computational operation and line of code in the smart contract contributes greatly to the financial cost of using the system in the form of transaction gas costs.\cite{3}
+	\end{itemize}
+	Designing a smart contract therefore cannot be compared to designing traditional database structures; smart contract design is significantly more intricate. Whereas traditional databases structures can trivially be iterated on without disruption to a system, this is not possible with smart contracts.
+	
+	For these reasons, it is a good idea to keep the smart contract as minimalistic as possible and to offload as much functionality as possible to the client off the blockchain, in order to reduce the surface for failure and the transaction costs of the system.
+	
 	\subsection{Language}
 	Code for Ethereum smart contracts is written in Ethereum Virtual Machine (EVM) code, which is a low-level stack-based bytecode language.\cite{3}
 	
@@ -314,7 +325,7 @@
 	
 	Note that signatures can have multiple revocations, even though that revoking a signature multiple times is redundant. This is because it would not be gas-efficient to add a condition in the smart contract to check if a signature has already been revoked, and as there is no harm in revoking a signature multiple times the client can ignore subsequent revocations.
 	
-	\subsection{Methods and events}
+	\subsection{Methods and Events}
 	Ethereum smart contracts can have specified methods that can be executed to change the state of the data stored by the smart contract. Method parameters are passed in transactions signed by Ethereum addresses.
 	
 	In addition to methods, Ethereum has an event logging system. Ethereum methods can emit events to signify a change in the system. Events have parameters and indexed parameters. Ethereum provides APIs to make it easy to search and filter through events by specifying values for indexed parameters.
@@ -371,11 +382,47 @@
 	\end{algorithm}
 	
 	\section{Client}
-	\begin{figure}[!ht]
-		\centering
-			\includegraphics[scale=0.5]{"architecture.1"}
-		\caption{Architecture diagram for the Trustery client.}
-	\end{figure}
+	Below is a diagram that outlines the architecture for the client-side portion of the project.
+	
+	This section will go into the details of the individual components of the architecture.
+	
+	\begin{center}
+  		\includegraphics[scale=0.5]{"architecture.1"}
+  		\captionof{figure}{Architecture diagram for the Trustery client.}
+	\end{center}
+	
+	\subsection{pytrustery package}
+	\textbf{pytrustery} is the name of the Python package for the Trustery client. This is the center of the system, and is responsible for interacting with all the required APIs and external systems required to fulfil the functional requirements of the client.
+	
+	\bigskip
+	\noindent \textbf{Language}\newline
+	Several programming languages were considered for the implementation of the command-line client.
+	
+	It was decided that a high-level interpreted language was more suitable for the client than a low-level compiled language for the following reasons:
+	\begin{itemize}
+		\item There is a large amount of user input and content processed by the client, so it would be more secure to use a high-level memory safe language to prevent attacks such as buffer overflow. This is especially essential for this project as a security vulnerability in the client could mean identity theft.
+		\item There is no low-level manipulation of hardware needed.
+		\item There is no need for high-speed computation or calculations; all cryptography is done by external libraries.
+	\end{itemize}
+	
+	There are several high-level languages that are suitable for creating command-line applications, such as Python and Ruby.
+	
+	Although many languages are suitable, Python was chosen over other languages like Ruby for the client because there is a reference implementation of Ethereum in Python (\textbf{pyethereum}).\cite{16} This means that modules from the reference implementation can be imported into pytrustery in order to achieve tasks that require making use of the Ethereum Application Binary Interface (ABI)\cite{14} - the interface for interpreting and producing smart contract data.
+	
+	The \textbf{pyethereum} library has modules available for interacting with the Ethereum ABI. This makes creating transactions and interpreting event data from the Ethereum blockchain significantly easier.
+	
+	\subsection{Console}
+	
+	\subsection{Events and Transactions Managers}
+	The
+	
+	\subsection{Ethereum API Communicator}
+	
+	\subsection{User Configuration Manager}
+	
+	\subsection{IPFS Interaction}
+	
+	\subsection{PGP Interaction}
 	
 	\chapter{Implementation}
 	
