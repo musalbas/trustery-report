@@ -1,7 +1,7 @@
 % Metapost TeX macro
 % Title: /home/mus/Code/trustery-report/figures/architecture.dia
 % Creator: Dia v0.97.2
-% CreationDate: Sat Apr  2 22:01:48 2016
+% CreationDate: Wed Apr  6 17:28:16 2016
 % For: mus
 
 
@@ -140,7 +140,7 @@ enddef;
     withpen pencircle scaled 0.1000x;
 % set_linewidth 0.100000
 % set_line_color 0.000000, 0.000000, 0.000000
-  draw (21.622500x,10.049482y)--(21.622500x,11.999982y)--(30.050000x,11.999982y)--(30.050000x,13.464739y)
+  draw (21.622500x,10.049487y)--(21.622500x,12.000000y)--(30.050000x,12.000000y)--(30.050000x,13.464739y)
     withpen pencircle scaled 0.1000x
     dashed dashpattern (on 0.400000x off 0.400000x);
 % set_linewidth 0.100000
@@ -149,7 +149,7 @@ enddef;
     withpen pencircle scaled 0.1000x;
 % set_linewidth 0.100000
 % set_line_color 0.000000, 0.000000, 0.000000
-  draw (21.595000x,15.100014y)--(21.595000x,16.025058y)--(21.610000x,16.025058y)--(21.610000x,17.964739y)
+  draw (21.595000x,15.100033y)--(21.595000x,16.025100y)--(21.610000x,16.025100y)--(21.610000x,17.964739y)
     withpen pencircle scaled 0.1000x
     dashed dashpattern (on 0.400000x off 0.400000x);
 % set_linewidth 0.100000
@@ -192,29 +192,27 @@ enddef;
   draw btex {\usefont{OT1}{phv}{m}{n} Blockchain} etex scaled 1.64t shifted (17.550000x,32.182500y);
 % set_linewidth 0.100000
   path p;
-  p = (24.550100x,24.000000y)--(24.550100x,27.500000y)--(28.930100x,27.500000y)--(28.930100x,24.000000y)--cycle;
+  p = (24.950100x,24.000000y)--(24.950100x,27.500000y)--(28.602600x,27.500000y)--(28.602600x,24.000000y)--cycle;
   fill p withcolor (1.000000,1.000000,1.000000);
 % set_line_color 0.000000, 0.000000, 0.000000
-  draw (24.550100x,24.000000y)--(24.550100x,27.500000y)--(28.930100x,27.500000y)--(28.930100x,24.000000y)--cycle
+  draw (24.950100x,24.000000y)--(24.950100x,27.500000y)--(28.602600x,27.500000y)--(28.602600x,24.000000y)--cycle
     withpen pencircle scaled 0.1000x;
   path p;
-  p = (23.550100x,24.700000y)--(23.550100x,25.400000y)--(25.550100x,25.400000y)--(25.550100x,24.700000y)--cycle;
+  p = (23.950100x,24.700000y)--(23.950100x,25.400000y)--(25.950100x,25.400000y)--(25.950100x,24.700000y)--cycle;
   fill p withcolor (1.000000,1.000000,1.000000);
 % set_line_color 0.000000, 0.000000, 0.000000
-  draw (23.550100x,24.700000y)--(23.550100x,25.400000y)--(25.550100x,25.400000y)--(25.550100x,24.700000y)--cycle
+  draw (23.950100x,24.700000y)--(23.950100x,25.400000y)--(25.950100x,25.400000y)--(25.950100x,24.700000y)--cycle
     withpen pencircle scaled 0.1000x;
   path p;
-  p = (23.550100x,26.100000y)--(23.550100x,26.800000y)--(25.550100x,26.800000y)--(25.550100x,26.100000y)--cycle;
+  p = (23.950100x,26.100000y)--(23.950100x,26.800000y)--(25.950100x,26.800000y)--(25.950100x,26.100000y)--cycle;
   fill p withcolor (1.000000,1.000000,1.000000);
 % set_line_color 0.000000, 0.000000, 0.000000
-  draw (23.550100x,26.100000y)--(23.550100x,26.800000y)--(25.550100x,26.800000y)--(25.550100x,26.100000y)--cycle
+  draw (23.950100x,26.100000y)--(23.950100x,26.800000y)--(25.950100x,26.800000y)--(25.950100x,26.100000y)--cycle
     withpen pencircle scaled 0.1000x;
 % set_line_color 0.000000, 0.000000, 0.000000
-  draw btex {\usefont{OT1}{phv}{m}{n} HTTP} etex scaled 1.64t shifted (25.950100x,25.295000y);
+  draw btex {\usefont{OT1}{phv}{m}{n} HTTP} etex scaled 1.64t shifted (26.350100x,25.295000y);
 % set_line_color 0.000000, 0.000000, 0.000000
-  draw btex {\usefont{OT1}{phv}{m}{n} Protocol} etex scaled 1.64t shifted (25.950100x,26.095000y);
-% set_line_color 0.000000, 0.000000, 0.000000
-  draw btex {\usefont{OT1}{phv}{m}{n} Client} etex scaled 1.64t shifted (25.950100x,26.895000y);
+  draw btex {\usefont{OT1}{phv}{m}{n} Client} etex scaled 1.64t shifted (26.350100x,26.095000y);
 % set_linewidth 0.100000
 % set_line_color 1.000000, 1.000000, 1.000000
 % fill_polygon
@@ -253,16 +251,16 @@ enddef;
     withpen pencircle scaled 0.0500x;
 % set_linewidth 0.100000
 % set_line_color 0.000000, 0.000000, 0.000000
-  draw (26.775000x,21.650000y)--(26.775000x,22.625000y)--(26.740100x,22.625000y)--(26.740100x,23.664739y)
+  draw (26.775000x,21.650000y)--(26.775000x,22.625000y)--(26.776350x,22.625000y)--(26.776350x,23.664739y)
     withpen pencircle scaled 0.1000x
     dashed dashpattern (on 0.400000x off 0.400000x);
 % set_linewidth 0.100000
 % set_line_color 0.000000, 0.000000, 0.000000
-  draw (26.490100x,23.032369y)--(26.740100x,23.832369y)--(26.990100x,23.032369y)
+  draw (26.526350x,23.032369y)--(26.776350x,23.832369y)--(27.026350x,23.032369y)
     withpen pencircle scaled 0.1000x;
 % set_linewidth 0.100000
 % set_line_color 0.000000, 0.000000, 0.000000
-  draw (24.550100x,25.750000y)--(24.500100x,25.750000y)--(21.880100x,25.750000y)--(21.765361x,25.750000y)
+  draw (24.950100x,25.750000y)--(24.900100x,25.750000y)--(21.880100x,25.750000y)--(21.765361x,25.750000y)
     withpen pencircle scaled 0.1000x
     dashed dashpattern (on 0.400000x off 0.400000x);
 % set_linewidth 0.100000
@@ -311,7 +309,7 @@ enddef;
     withpen pencircle scaled 0.0500x;
 % set_linewidth 0.100000
 % set_line_color 0.000000, 0.000000, 0.000000
-  draw (28.930100x,25.750000y)--(30.040100x,25.750000y)--(30.040100x,25.737500y)--(31.214839x,25.737500y)
+  draw (28.602600x,25.750000y)--(29.876350x,25.750000y)--(29.876350x,25.737500y)--(31.214839x,25.737500y)
     withpen pencircle scaled 0.1000x
     dashed dashpattern (on 0.400000x off 0.400000x);
 % set_linewidth 0.100000

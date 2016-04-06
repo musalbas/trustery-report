@@ -412,6 +412,46 @@
 	The \textbf{pyethereum} library has modules available for interacting with the Ethereum ABI. This makes creating transactions and interpreting event data from the Ethereum blockchain significantly easier.
 	
 	\subsection{Console}
+	The console module can be executed by users to interact with the Trustery system using the command-line.
+	
+	A Python library called \textbf{Click} will be used for the command-line interface. Click is a command-line interface creation kit that aims to make the process of writing command-line interfaces quick.\cite{17}
+	
+	Using Click, the command-line interface will consist of a set of commands with their own options that can be executed by the user.
+	
+	The interface will have the following commands to fulfil the functional requirements of the client:
+	\begin{itemize}
+		\item \textbf{add} - adds an attribute.
+		
+		Options: attribute type, attribute identifier and attribute data.
+		\item \textbf{sign} - signs an attribute.
+		
+		Options: attribute ID and expiry time.
+		\item \textbf{revoke} - revokes an attribute.
+		
+		Options: attribute ID.
+		
+		\item \textbf{search} - searches for and filters attributes.
+		
+		Options: attribute type, identifier and owner.
+		
+		\item \textbf{retrieve} - retrieves information about an attribute and its signatures.
+		
+		Options: attribute ID.
+		
+		\item \textbf{addpgp} - adds your PGP key as an attribute to your identity.
+		
+		Options: PGP key identifier.
+		
+		\item \textbf{trust} - adds an identity to your trust store.
+		
+		Options: Ethereum address.
+		
+		\item \textbf{untrust} - removes an identity from your trust store.
+		
+		Options: Ethereum address.
+	\end{itemize}
+	
+	The commands should be executed from the command-line by running \textbf{trustery \textit{command}}, with the options being specified after the command name.
 	
 	\subsection{Events and Transactions Managers}
 	The \textbf{events manager} is a singleton class that is responsible for retrieving and filtering events from Ethereum. It has methods for filtering attribute, signature and revocation events by their indexed parameters (as described in \textit{section 4.1.3}).
@@ -439,8 +479,22 @@
 	These facts combined mean that there is not a large number of attributes, transactions, events and objects with complicated relationships that the client needs to handle, and therefore a high level of object abstraction is not required.
 	
 	\subsection{Ethereum API Communicator}
+	The \textbf{ethapi} module is responsible for managing tasks relating to direct interaction with the Ethereum system.
+	
+	The module will initiate a working connection with Ethereum's JSON RPC that can be used by the events and transactions managers. To achieve this, the \textbf{ethereum-rpc-client} Python package will be used as the client for the Ethereum JSON RPC server. The package implements a handful of methods exposed by the Ethereum JSON RPC server.\cite{18}
+	
+	This module is also responsible for keeping information about the smart contract itself for usage by the events and transactions managers, such as the smart contract ABI to initialize the contract translator with.
+	
+	Finally, this module will also provide functions to deal with any encoding of data required before sending data off to the Ethereum JSON RPC server. This is intended to standardize the process of using the Ethereum JSON RPC by encoding all the data in a standard way, to prevent bugs caused by data mishandling.
 	
 	\subsection{User Configuration Manager}
+	The \textbf{userconfig} module is responsible for managing any user state information, including the trust store.
+	
+	Due to the low volume of user data and lack of need for concurrency as the client serves a single user, it was decided that storing data using flat files is a suitable way to store user state information. The core data of the system regarding the attributes themselves is stored in the blockchain.
+	
+	\textbf{configobj} is a Python library for reading and writing configuration files using the \textit{INI} file format. This library will be used for managing the user configuration, and was chosen for its simplicity and features.
+	
+	It supports nested sections which makes it possible to structure configuration sections with a hierarchy, and it comes with a validation system which makes it easy to automatically validate data being stored in the configuration.\cite{19}
 	
 	\subsection{IPFS Interaction}
 	
