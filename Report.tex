@@ -481,7 +481,7 @@
 	\subsection{Ethereum API Communicator}
 	The \textbf{ethapi} module is responsible for managing tasks relating to direct interaction with the Ethereum system.
 	
-	The module will initiate a working connection with Ethereum's JSON RPC that can be used by the events and transactions managers. To achieve this, the \textbf{ethereum-rpc-client} Python package will be used as the client for the Ethereum JSON RPC server. The package implements a handful of methods exposed by the Ethereum JSON RPC server.\cite{18}
+	The module will initiate a working connection with Ethereum's JSON RPC that can be used by the events and transactions managers. To achieve this, the \textbf{ethereum-rpc-client} Python package will be used as the HTTP client for the Ethereum JSON RPC server. The package implements a handful of methods exposed by the Ethereum JSON RPC server.\cite{18}
 	
 	This module is also responsible for keeping information about the smart contract itself for usage by the events and transactions managers, such as the smart contract ABI to initialize the contract translator with.
 	
@@ -492,13 +492,31 @@
 	
 	Due to the low volume of user data and lack of need for concurrency as the client serves a single user, it was decided that storing data using flat files is a suitable way to store user state information. The core data of the system regarding the attributes themselves is stored in the blockchain.
 	
-	\textbf{configobj} is a Python library for reading and writing configuration files using the \textit{INI} file format. This library will be used for managing the user configuration, and was chosen for its simplicity and features.
+	\textbf{ConfigObj} is a Python library for reading and writing configuration files using the \textit{INI} file format. This library will be used for managing the user configuration, and was chosen for its simplicity and features.
 	
 	It supports nested sections which makes it possible to structure configuration sections with a hierarchy, and it comes with a validation system which makes it easy to automatically validate data being stored in the configuration.\cite{19}
 	
+	\bigskip
+	\noindent \textbf{Trust store}\newline
+	The user trust store that stores trusted identities will also use this configuration manager to store trust data.
+	
+	The configuration will have a \textbf{truststore} section to represent the trust store. Each Ethereum address trusted by a user will have its own variable in the section, set to the boolean value \textit{true}. Removing an Ethereum address from the trust store is as simple as deleting the variable from the configuration.
+	
+	Using this design, adding and removing identities from the trust store is are operations that both take \textit{O(1)} time, as adding and removing variables require no iterative computation.
+	
 	\subsection{IPFS Interaction}
+	The \textbf{ipfs-api} Python package provides IPFS API bindings for Python\cite{20}. Using this package, pytrustery can easily upload and retrieve files to the IPFS network.
+	
+	The package acts as a HTTP client to communicate with the local IPFS node using its HTTP API.
 	
 	\subsection{PGP Interaction}
+	GNU Privacy Guard (GPG) is a complete and free implementation of the OpenPGP standard, that users can install on their local machines.\cite{22}	
+	
+	The \textbf{python-gnupg} Python package is a wrapper for the GNU Privacy Guard binary.\cite{21} Using this package, pytrustery can easily retrieve PGP public keys and generate signatures for cryptographic proofs to add as attributes to the blockchain. It can also verify signatures to verify the cryptographic proofs of PGP attributes on the blockchain.
+	
+	Generating a cryptographic proof for a PGP public key will consist of a signature of the Ethereum address that the PGP key attribute will be published from. This cryptographically proves that the PGP key owner has verified that they want to be associated with the Ethereum address in question.
+	
+	This binding of PGP key to Ethereum address is useful because it allows users that trust an individual's PGP key to also trust their Ethereum identity.
 	
 	\chapter{Implementation}
 	
