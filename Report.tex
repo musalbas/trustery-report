@@ -12,6 +12,12 @@
 \usepackage{caption}
 \graphicspath{{./figures/}}
 \newcommand{\code}{\texttt}
+\usepackage{listings}
+\lstset{
+basicstyle=\small\ttfamily,
+columns=flexible,
+breaklines=true
+}
 
 \begin{filecontents*}{originality.sty}
 	\NeedsTeXFormat{LaTeX2e}
@@ -88,6 +94,8 @@
 
 	Ideally, a PKI for PGP would be be fully decentralized and not rely on centralized servers. Centralized keyservers act as a central point of failure that also allow for censorship, exclusion and alteration of keys by a third party.
 	
+	Most importantly, having an unforgeable decentralized ledger of keys would provide the transparency needed to quickly identify rogue certificates such as the one issued by DigiNotar CA, as all new certificates would be immediately visible to the network.
+	
 	\subsection{Identity}
 	The X.509 standard for certificates on the Internet provides scope for a wide range of identity attributes to be embedded in certificates.\cite{8} Identity attributes include information such as phone number, address and name. This provides a way for certificate authorities to vouch for the identity associations of an organization's online presence.
 	
@@ -101,7 +109,7 @@
 	
 	
 	\section{Aims}
-	The aim of this project is to materialize the decentralized public key infrastructure and identity management system as described above.
+	The aim of this project is to materialize the decentralized public key infrastructure and identity management system that solves the problems described above.
 	
 	Specifically, this project will create a system based on a smart contract on the Ethereum blockchain that will enable users to manage identities and attributes associated with identities, including cryptographic keys.
 	
@@ -423,6 +431,9 @@
 		\item \textbf{add} - adds an attribute.
 		
 		Options: attribute type, attribute identifier and attribute data.
+		\item \textbf{ipfsadd} - adds an attribute over IPFS.
+		
+		Options: attribute type, attribute identifier and attribute data.
 		\item \textbf{sign} - signs an attribute.
 		
 		Options: attribute ID and expiry time.
@@ -449,6 +460,10 @@
 		\item \textbf{untrust} - removes an identity from your trust store.
 		
 		Options: Ethereum address.
+		
+		\item \textbf{trusted} - view the identities in your trust store.
+		
+		Options: \textit{none}.
 	\end{itemize}
 	
 	The commands should be executed from the command-line by running \textbf{trustery \textit{command}}, with the options being specified after the command name.
@@ -520,10 +535,276 @@
 	
 	\chapter{Implementation}
 	
+	\subsection{Methodology}
+	The project's software was implemented in the space of several months using an iterative, agile software development methodology. This worked as the modular nature of the software's design allowed each component to be developed separately. The simplest console commands were implemented first and with each iteration more complicated console commands that required more advanced component interactions were implemented.
+	
+	The smart contract was implemented first, with the events and transactions managers then being built on top of the smart contract, adding more features that rely on other components such as PGP and IPFS with each iteration. Each iteration relied on the previous iterations. A general overview of the iterations is as follows:
+	\begin{itemize}
+		\item Iteration 1: code for the smart contract.
+		\item Iteration 2: Ethereum API communicator module.
+		\item Iteration 3: core functionality for transactions manager module for accessing the three smart contract methods.
+		\item Iteration 4: console interface for accessing the smart contract methods.
+		\item Iteration 5: core functionality for the events manager module for filtering events produced by the smart contract.
+		\item Iteration 6: console interface for retrieving attributes, signatures and revocations.
+		\item Iteration 7: trust store capability for the console.
+		\item Iteration 8: PGP and IPFS capabilities for the transactions and events managers.
+		\item Iteration 9: console capability for adding PGP key attributes over IPFS.
+	\end{itemize}
+	
+	\subsection{Version Management}
+	Git was used as a version management system for the project's source code. This was used in case any changes in the code had to be rolled back, although there has not been any need for this during the development of the project.
+	
+	\section{Smart Contract}
+	The smart contract was implemented in Solidity in the way that is described in the \textit{Design} chapter of the report. The full code of the smart contract is attached to the report in \textit{Appendix A}.
+	
+	The smart contract implementation is very few lines of code compared to the client implementation, but the smart contract is of equal if not greater importance to the project's implementation as it defines the functionality of the system.
+	
+	The data entities described in the \textit{Design} chapter of the report were implemented as \textit{structs} in Solidity; a way to define new data types.\cite{13} The data for the entities were stored in \textit{struct arrays} that are manipulated by the methods and easily referenced to by their index number, which also doubles as the numeric ID of each data entity referenced by the users of the system.
+	
+	For example, the \textit{struct} for the signature attribute and its corresponding \textit{struct array} declaration is:
+	\begin{lstlisting}
+struct Signature {
+    address signer;
+    uint attributeID;
+    uint expiry;
+}
+
+Signature[] public signatures;
+	\end{lstlisting}
+	
+	\section{Client}
+	The client was implemented in Python in the way that is described in the \textit{Design} chapter of the report. The source code is published on GitHub.\footnote{https://github.com/musalbas/trustery}
+	
+	The \textit{setuptools} Python package is used to facilitate easy installation of the client using the Python package manager \textit{pip}.
+	
+	After installation, running the \textit{trustery} command with no argument produces the following help text:
+	
+	\begin{lstlisting}
+Usage: trustery [OPTIONS] COMMAND [ARGS]...
+
+  Ethereum-based identity system.
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  add                 Add an attribute to your identity.
+  ipfsadd             Add an attribute to your identity over IPFS.
+  ipfsaddpgp          Add a PGP key attribute to your identity over...
+  rawaddattribute     (Advanced) Manually add an attribute to your...
+  rawrevokeattribute  (Advanced) Manaully revoke your signature of...
+  rawsignattribute    (Advanced) Manually sign an attribute about...
+  retrieve            Retrieve an attribute.
+  revoke              Revoke one of your signatures.
+  search              Search for attributes.
+  sign                Sign an attribute.
+  trust               Trust an Ethereum address.
+  trusted             View the list of trusted Ethereum addresses.
+  untrust             Untrust an Ethereum address.
+	\end{lstlisting}
+	
+	\subsection{Raw Commands}
+	The commands \textit{rawaddattribute}, \textit{rawrevokeattribute} and \textit{rawsignattribute} that were not part of the project's original design were added to the interface.
+	
+	The purpose of these commands is to allow the user to directly pass arguments to the smart contract methods without any data checking or post-processing (such as automatically populating the \textit{datahash} field) by the client.
+	
+	This was mainly useful during the early development stages of the project for debugging and to test that the smart contract was working as expected.
+	
+	However, these commands would also be useful to users and other software applications that may directly call the trustery client that wish to implement attributes that are not directly supported by the client. For example, a new type of attribute with a cryptographic proof that the client does not know how to produce, or an attribute that links to off-blockchain data using a protocol that the client does not support.
+	
+	\subsection{Managing Attributes}
+	Adding an attribute can be done with the \textit{trustery add} command. The console then prompts the user for the attribute type, identifier and data. For example:
+	\begin{lstlisting}
+$ trustery add
+Attribute type: twitter-id
+Attribute identifier: foobar
+Attribute data []: 
+
+Transaction sent.
+	\end{lstlisting}
+	Once the transaction is mined in a block (Ethereum aims towards 12-second block times\cite{23}), the attribute can be searched for using the \textit{trustery search} command:
+	\begin{lstlisting}
+$ trustery search --identifier foobar
+Attribute ID #12:
+        Type: twitter-id
+        Owner: db57ccafaa5198089af9c69499e8d3d67cb463a3 [untrusted]
+        Identifier: foobar
+        [0 valid signatures]
+	\end{lstlisting}
+	The attribute can then be signed with the \textit{trustery sign} command, with the user specifying the number of days until the signature's expiry:
+	\begin{lstlisting}
+$ trustery sign
+Attribute ID: 12
+Signature days to expire [365]: 10
+
+Transaction sent.
+	\end{lstlisting}
+	The attribute can then be retrieved with the \textit{trustery retrieve} command (in this case there is no attribute data, as the data is the identifier) and the signature with its validity status is shown:
+	\begin{lstlisting}
+$ trustery retrieve --attributeid 12
+
+Attribute ID #12:
+        Type: twitter-id
+        Owner: db57ccafaa5198089af9c69499e8d3d67cb463a3 [untrusted]
+        Identifier: foobar
+        [1 valid signature]
+
+Signatures for attribute ID #12:
+        #3 [valid] by db57ccafaa5198089af9c69499e8d3d67cb463a3 [untrusted]
+
+--ATTRIBUTE DATA:
+
+	\end{lstlisting}
+	The attribute's signature can be revoked with the \textit{trustery revoke} command, with the change being reflected when the attribute is retrieved again:
+	\begin{lstlisting}
+$ trustery revoke --signatureid 3
+
+Transaction sent.
+$ trustery retrieve --attributeid 12
+
+Attribute ID #12:
+        Type: twitter-id
+        Owner: db57ccafaa5198089af9c69499e8d3d67cb463a3 [untrusted]
+        Identifier: foobar
+        [0 valid signatures]
+
+Signatures for attribute ID #12:
+        #3 [revoked] by db57ccafaa5198089af9c69499e8d3d67cb463a3 [untrusted]
+
+--ATTRIBUTE DATA:
+
+	\end{lstlisting}
+	
+	\bigskip
+	\noindent \textbf{Managing the trust store}\newline
+	The command \textit{trustery trust} can be used to locally mark identities as trusted. This is reflected in all areas of the client when an Ethereum address is displayed. For example:
+	\begin{lstlisting}
+$ trustery trust --address db57ccafaa5198089af9c69499e8d3d67cb463a3
+
+Address db57ccafaa5198089af9c69499e8d3d67cb463a3 trusted.
+$ trustery retrieve --attributeid 12
+Attribute ID #12:
+        Type: twitter-id
+        Owner: db57ccafaa5198089af9c69499e8d3d67cb463a3 [trusted]
+        Identifier: foobar
+        [0 valid signatures]
+
+Signatures for attribute ID #12:
+        #3 [revoked] by db57ccafaa5198089af9c69499e8d3d67cb463a3 [trusted]
+
+--ATTRIBUTE DATA:
+
+	\end{lstlisting}
+	The \textit{trustery untrust} command can also similarly be used to remove identities from the trust store, and the \textit{trustery trusted} command can be used to view the list of identities in the trust store.
+	
+	\subsection{PGP}
+	The \textit{trustery ipfsaddpgp} command allows users to publish their PGP keys as an attribute of their identities, with the PGP key data and proof stored on IPFS.
+	
+	When using the command, the client automatically interacts with the local \textit{gpg} binary to export the public key specified by the user and use its private key to generate the cryptographic proof portion of the attribute.
+	
+	The cryptographic proof of the attribute is a PGP signature of the Ethereum address that the attribute is to be published from. This proves that the owner of the PGP key has "authorized" a binding between the PGP key to the Ethereum address.
+	
+	The attribute data is a concatenation of the ASCII armour representative of the PGP key and the PGP signature, such as follows:
+	\begin{lstlisting}
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1
+
+(data)
+-----END PGP PUBLIC KEY BLOCK-----
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Ethereum address: (address)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+(signature data)
+-----END PGP SIGNATURE-----
+	\end{lstlisting}
+	When the \textit{trustery retrieve} command is used on a PGP attribute, the client downloads the attribute data and verifies that the PGP signature is valid and matches the correct Ethereum address and PGP key. To accomplish this, the client creates
+	
+	\subsection{IPFS}
+	
+	\section{Issues encountered}
+	\subsection{Inconsistent Ethereum Python API}
+	
+	\subsection{Inconsistent Ethereum Python ABI}
+	
+	\subsection{Gas Limit and PGP}
+	
+	\section{Testing}
+	\subsection{Private Network}
+	
+	\subsection{Unit Testing}
+	
 	\chapter{Evaluation}
 	
 	\chapter{Conclusion}
 	
 	\bibliographystyle{IEEEtran}
 	\bibliography{6ccs3prj}
+	
+	\appendix
+	\chapter{Smart Contract Code}
+	\begin{lstlisting}
+contract Trustery {
+    struct Attribute {
+        address owner;
+        string attributeType;
+        bool has_proof;
+        bytes32 identifier;
+        string data;
+        string datahash;
+    }
+
+    struct Signature {
+        address signer;
+        uint attributeID;
+        uint expiry;
+    }
+
+    struct Revocation {
+        uint signatureID;
+    }
+
+    Attribute[] public attributes;
+    Signature[] public signatures;
+    Revocation[] public revocations;
+
+    event AttributeAdded(uint indexed attributeID, address indexed owner, string attributeType, bool has_proof, bytes32 indexed identifier, string data, string datahash);
+    event AttributeSigned(uint indexed signatureID, address indexed signer, uint indexed attributeID, uint expiry);
+    event SignatureRevoked(uint indexed revocationID, uint indexed signatureID);
+
+    function addAttribute(string attributeType, bool has_proof, bytes32 identifier, string data, string datahash) returns (uint attributeID) {
+        attributeID = attributes.length++;
+        Attribute attribute = attributes[attributeID];
+        attribute.owner = msg.sender;
+        attribute.attributeType = attributeType;
+        attribute.has_proof = has_proof;
+        attribute.identifier = identifier;
+        attribute.data = data;
+        attribute.datahash = datahash;
+        AttributeAdded(attributeID, msg.sender, attributeType, has_proof, identifier, data, datahash);
+    }
+
+    function signAttribute(uint attributeID, uint expiry) returns (uint signatureID) {
+        signatureID = signatures.length++;
+        Signature signature = signatures[signatureID];
+        signature.signer = msg.sender;
+        signature.attributeID = attributeID;
+        signature.expiry = expiry;
+        AttributeSigned(signatureID, msg.sender, attributeID, expiry);
+    }
+
+    function revokeSignature(uint signatureID) returns (uint revocationID) {
+        if (attributes[signatureID].owner == msg.sender) {
+            revocationID = revocations.length++;
+            Revocation revocation = revocations[revocationID];
+            revocation.signatureID = signatureID;
+            SignatureRevoked(revocationID, signatureID);
+        }
+    }
+}
+	\end{lstlisting}
 \end{document}
