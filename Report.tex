@@ -660,6 +660,7 @@ Signatures for attribute ID #12:
 $ trustery revoke --signatureid 3
 
 Transaction sent.
+
 $ trustery retrieve --attributeid 12
 
 Attribute ID #12:
@@ -682,6 +683,7 @@ Signatures for attribute ID #12:
 $ trustery trust --address db57ccafaa5198089af9c69499e8d3d67cb463a3
 
 Address db57ccafaa5198089af9c69499e8d3d67cb463a3 trusted.
+
 $ trustery retrieve --attributeid 12
 Attribute ID #12:
         Type: twitter-id
@@ -722,21 +724,89 @@ Version: GnuPG v1
 (signature data)
 -----END PGP SIGNATURE-----
 	\end{lstlisting}
-	When the \textit{trustery retrieve} command is used on a PGP attribute, the client downloads the attribute data and verifies that the PGP signature is valid and matches the correct Ethereum address and PGP key. To accomplish this, the client creates
+	When the \textit{trustery retrieve} command is used on a PGP attribute, the client downloads the attribute data and verifies that the PGP signature is valid and matches the correct Ethereum address and PGP key. The validity of the signature is displayed to the user by the client.
+	
+	To accomplish this, the client creates a temporary GPG key chain on the local machine, imports the attribute's PGP public key and verifies the signature. The creation of the temporary GPG key chain ensures that any new information processed by GPG is segregated from the user's actual key chain, to prevent any unintended overriding of PGP keys.
+	
+	The temporary key chain is stored in a directory created using Python's \textit{tempfile} module, which securely creates temporary directories without race conditions and with directory permissions that permit only the user that created the directory to read the directory. After the client is finished processing the attribute's PGP data, the directory and its files are deleted.
+	
+	Adding and retrieving a PGP key attribute can be achieved as follows:
+	\begin{lstlisting}
+$ trustery ipfsaddpgp --keyid mus@musalbas.com
+
+Transaction sent.
+
+$ trustery retrieve --attributeid 3
+
+Attribute ID #3:
+        Type: pgp-key
+        Owner: db57ccafaa5198089af9c69499e8d3d67cb463a3 [trusted]
+        Identifier: 0x144b59ad818b0e6348709bd061ceb3388f21ea17
+        [0 valid signatures]
+
+Proof status for attribute ID #3:
+        Valid
+
+Signatures for attribute ID #3:
+
+--ATTRIBUTE DATA:
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+(...PGP attribute data as shown above...)
+	\end{lstlisting}
 	
 	\subsection{IPFS}
+	The command \textit{ipfsadd} is identical to the command \textit{add}, except that it stores the attribute data supplied by the user on IPFS. Attribute data is stored in IPFS blocks, which is a blob of binary data. IPFS provides \textit{get} and \textit{put} API calls for blocks.\cite{24}
+	
+	The command can be used as follows:
+	\begin{lstlisting}
+$ trustery ipfsadd
+Attribute type: twitter-id
+Attribute identifier: foobar
+Attribute data []: 
+
+Transaction sent.
+	\end{lstlisting}
 	
 	\section{Issues encountered}
-	\subsection{Inconsistent Ethereum Python API}
+	This section goes into the details of implementation issues encountered in the project, and the steps taken to work around the issues.
+	
+	\subsection{Inconsistent Ethereum Python API and Lack of Documentation}
+	One of the biggest issues in implementing the project on the Ethereum smart contract system was that the relatively young age of the Ethereum project meant that there was a massive lack of documentation. This was especially the case for the \textit{pyethereum} library.
+	
+	Fortunately, the source code for the \textit{pythereum} library is fairly well organized and readable, which meant that it was possible to understand the API methods by reading the code.
+	
+	However, one recurring issue was an inconsistency in the way data is represented, expected and returned across Ethereum APIs. For example data is returned from the Ethereum JSON RPC in hex format, but \textit{pyethereum} expects it in raw binary format for some parameters and in hex format for other parameters, which lead to a large amount of unintuitive data conversion in the client.
+	
+	Another example is that the \textit{listen} method in \textit{pyethereum}'s contract translation class is the only method that for an unknown reason prints output to the console by default, which is a cause for confusion while developing a command-line application that prints to the console anyway. As a part of this project's implementation, a minor pull request was submitted and merged to the \textit{pyethereum} project to address this issue.\footnote{https://github.com/ethereum/pyethereum/pull/310}
 	
 	\subsection{Inconsistent Ethereum Python ABI}
+	One of the issues encountered also due to the Ethereum project's young age was a changing Application Binary Interface (ABI). The \textit{pyethereum} package was outdated on the Python Package Index website, leading to early attempts at the implementation of the \textit{pytrustery} client's interaction with Ethereum to not work in the expected way. As a part of this project's implementation, this issue was reported and solved on the \textit{pyethereum} project's issue tracker.\footnote{https://github.com/ethereum/pyethereum/issues/309}
+	
+	There was also a bug in the Solidity smart contract compiler which meant that indexed event parameters that were longer than 32 bytes were not treated properly, as indexed parameters longer than 32 bytes should be hashed so that they can be represented in 32 bytes.\footnote{https://github.com/ethereum/solidity/issues/199} This led to a small change in the project's design to limit attribute identifiers to 32 bytes, and perform the hashing directly in the client if necessary. This solution meant that there is no change to the theoretical functionality of the project.
 	
 	\subsection{Gas Limit and PGP}
+	Due to the large size of PGP keys, there was difficulty in directly publishing PGP key data to the blockchain in the test network due to the gas limit specified with transactions; transactions could not be mined.
+	
+	Regardless, it is not economically sensible to publish such a large amount of data to the blockchain due to the theoretically large gas price.
+	
+	As a result, the \textit{addpgp} command was renamed to \textit{ipfsaddpgp} as the client only allows PGP attribute data to be stored on IPFS only. This significantly reduces the gas price as only the URI to the PGP data on IPFS needs to be stored on the blockchain.
 	
 	\section{Testing}
+	This section	 describes how the project was tested during its implementation phase.
+	
 	\subsection{Private Network}
+	Due to the financial cost associated with paying for the gas price for Ethereum transactions, it is not practical to test the system on the main Ethereum blockchain throughout the main development phase.
+	
+	Instead, a private Ethereum network and blockchain was setup on a local development machine with the only node and miner being the local machine. The genesis block was programmed to give a large amount of Ether to an Ethereum address with private keys stored on the local machine, to allow for a large amount of test Ether to pay for the gas for test transactions. The smart contract was also published and tested on the private network.
+	
+	This allowed for the software and transactions to be tested for free on an environment as close as possible to the real Ethereum network.
 	
 	\subsection{Unit Testing}
+	Unit tests were developed for the most critical parts of the system.\footnote{https://github.com/musalbas/trustery/tree/master/pytrustery/test}
+	
+	In particular, unit tests were developed for the code that verifies the proof for PGP attributes. This was achieved by generating attributes that produce different proof statuses (valid, invalid and unknown), and by saving dictionaries that represent these attributes (that the function for verifying proofs expects) in a file in \textit{pickle} format. \textit{Pickle} is a Python object serialization format.\footnote{https://docs.python.org/2/library/pickle.html}
+	
+	The unit tests can then read the files and deserialize the \textit{pickle} data for usage in tests.
 	
 	\chapter{Evaluation}
 	
