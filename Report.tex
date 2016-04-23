@@ -82,7 +82,7 @@ breaklines=true
 	The motivation for this project to build an identity system based on smart contracts on the blockchain arises from two problems, outlined in this section.
 	
 	\subsection{Centralisation and Security Weaknesses of Public Key Infrastructure}
-	The secure operation of SSL/TLS relies on a set of trusted Certificate Authorities (CAs) to authenticate public keys\cite{1}. In practice, the set of trusted CAs are bundled into operating systems and web browsers. Therefore, the Public Key Infrastructure (PKI) is centralized as only CAs chosen by operating system and web browser vendors may issue globally valid certificates.
+	The secure operation of SSL/TLS relies on a set of trusted Certificate Authorities (CAs) to authenticate public keys\cite{1}. In practice, the set of trusted CAs are bundled into operating systems and web browsers. Therefore, the Public Key Infrastructure (PKI) is centralised as only CAs chosen by operating system and web browser vendors may issue globally valid certificates.
 
 	This system is exclusive; it is expensive and time-consuming to convince operating system and web browser vendors to bundle a CA, therefore entities must usually pay CAs to sign their public keys. For example, it typically takes over 11 months to apply for root CA inclusion in Mozilla products\cite{6}.
 	 
@@ -90,11 +90,11 @@ breaklines=true
 
 	PGP is a data encryption and decryption standard that does not use CAs to verify the authenticity of public keys. Instead, it offers a feature that allows individuals to sign other individuals' public keys to certify their authenticity. This creates a web-of-trust model that can navigated to determine the authenticity of public keys belonging to individuals that have no pre-shared secret with each other.\cite{2}
 
-	The web-of-trust model is a first step towards a decentralized PKI. However, PGP itself is not a PKI as it does not provide a way to retrieve public keys. Commonly, PKI for PGP is implemented as centralized keyservers (such as pgp.mit.edu) that are used to query for public keys.
+	The web-of-trust model is a first step towards a decentralised PKI. However, PGP itself is not a PKI as it does not provide a way to retrieve public keys. Commonly, PKI for PGP is implemented as centralised keyservers (such as pgp.mit.edu) that are used to query for public keys.
 
-	Ideally, a PKI for PGP would be be fully decentralized and not rely on centralized servers. Centralized keyservers act as a central point of failure that also allow for censorship, exclusion and alteration of keys by a third party.
+	Ideally, a PKI for PGP would be be fully decentralised and not rely on centralised servers. Centralised keyservers act as a central point of failure that also allow for censorship, exclusion and alteration of keys by a third party.
 	
-	Most importantly, having an unforgeable decentralized ledger of keys would provide the transparency needed to quickly identify rogue certificates such as the one issued by DigiNotar CA, as all new certificates would be immediately visible to the network.
+	Most importantly, having an unforgeable decentralised ledger of keys would provide the transparency needed to quickly identify rogue certificates such as the one issued by DigiNotar CA, as all new certificates would be immediately visible to the network.
 	
 	\subsection{Identity}
 	The X.509 standard for certificates on the Internet provides scope for a wide range of identity attributes to be embedded in certificates.\cite{8} Identity attributes include information such as phone number, address and name. This provides a way for certificate authorities to vouch for the identity associations of an organization's online presence.
@@ -103,17 +103,17 @@ breaklines=true
 	
 	For example, when an employer needs to verify a potential employee's degree certification, the degree-awarding university can cryptographically sign a degree, and the branch of the government responsible for giving universities degree-awarding powers can cryptographically sign the university's degree-awarding certification. The employer only needs to search the webs-of-trust to trust the branch of the government that is responsible for giving universities degree-awarding powers, and work through the remaining chain-of-trust.
 	
-	Other examples could be verifying a company's shareholders and directors, verifying the visa of an traveller or verifying the driving license of a citizen.
+	Other examples could be verifying a company's shareholders and directors, verifying the visa of an traveller or verifying the driving license of a citisen.
 	
 	This not easily possible with the current X.509 certificate standard because the standard does not allow certificate authorities to sign specific and fine-grained attributes in a certificate; certificate authorities must sign the entire certificate or nothing.
 	
 	
 	\section{Aims}
-	The aim of this project is to materialize the decentralized public key infrastructure and identity management system that solves the problems described above.
+	The aim of this project is to realise the decentralised public key infrastructure and identity management system that solves the problems described above.
 	
 	Specifically, this project will create a system based on a smart contract on the Ethereum blockchain that will enable users to manage identities and attributes associated with identities, including cryptographic keys.
 	
-	The system will be decentralized and will allow users to sign and verify specific and fine-grained attributes of identities using a web-of-trust model.
+	The system will be decentralised and will allow users to sign and verify specific and fine-grained attributes of identities using a web-of-trust model.
 	
 	\chapter{Background review}
 	\section{Blockchain}
@@ -121,9 +121,9 @@ breaklines=true
 	
 	In the Bitcoin network the proof-of-work involves repeatedly hashing blocks of incoming transactions until a hash is found that begins with a certain number of zero bits. This requires CPU power, and so as long as the majority of the CPU power on the network is not controlled by a central authority, a central authority cannot modify the blockchain and reverse transactions. This is because the consensus rule of the network is such that the blockchain with the biggest number of blocks is the correct one, and so an authority that does not have the majority of the network's CPU power is unlikely to outpace the creation of blocks of the rest of the network.
 	
-	The peer-to-peer nature of the Bitcoin blockchain and the fact that it is designed so that it is computationally expensive (and hence theoretically economically unattractive) for a central authority to take control of the blockchain and reverse transactions makes it a suitable tool to satisfy the decentralized aim of this project.
+	The peer-to-peer nature of the Bitcoin blockchain and the fact that it is designed so that it is computationally expensive (and hence theoretically economically unattractive) for a central authority to take control of the blockchain and reverse transactions makes it a suitable tool to satisfy the decentralised aim of this project.
 	
-	The idea of this project is therefore to exploit the decentralized data storage and consensus capabilities of the blockchain to store identities and keys for a public key infrastructure, rather than transactions for a cash system.
+	The idea of this project is therefore to exploit the decentralised data storage and consensus capabilities of the blockchain to store identities and keys for a public key infrastructure, rather than transactions for a cash system.
 	
 	\subsection{Smart Contracts and Ethereum}
 	Each Bitcoin transaction references other transactions (called inputs) and creates outputs, which are recorded on the Bitcoin blockchain. The Bitcoin in these outputs can then be "spent" by other transactions. To facilitate the creation of transactions, Bitcoin has a transaction scripting language that is used to specify "locking scripts" for specifying conditions that must be met to spend transaction outputs.\cite{10}
@@ -135,13 +135,19 @@ breaklines=true
 	The Ethereum white paper specifies several potential applications for the use of smart contracts such as:
 	\begin{itemize}
 		\item Token systems representing assets such as company stocks or gold.
-		\item Decentralized marketplaces.
-		\item Decentralized file storage.
+		\item Decentralised marketplaces.
+		\item Decentralised file storage.
 	\end{itemize}
 	
-	One of the other potential applications discussed in the white paper relating to this project is identity and reputation systems. For example, a smart contract can be created for mapping domain names to IP addresses to provide a decentralized domain name registration system. Namecoin is an example of such a system that uses a Bitcoin-like blockchain.\footnote{http://namecoin.org/}
+	One of the other potential applications discussed in the white paper relating to this project is identity and reputation systems. For example, a smart contract can be created for mapping domain names to IP addresses to provide a decentralised domain name registration system. Namecoin is an example of such a system that uses a Bitcoin-like blockchain.\footnote{http://namecoin.org/}
+	
+	Smart contracts in Ethereum are written in a low-level stack-based bytecode language executed by an Ethereum virtual machine and referred to as Ethereum virtual machine (EVM) code. Smart contracts can also be written in a high-level language such as Serpent and then compiled to EVM code.\cite{3}
+	
+	The primary proposition of this project is to write such a smart contract with functionality for the operation of a public key infrastructure and identity management system, where public keys and identity attributes are stored on the blockchain and can be managed by the smart contract.
 	
 	\section{Public Key Infrastructure}
+		
+	
 	\subsection{Certificate Authorities}
 	\subsection{Web of Trust}
 	\section{Alternative Identity and Public Key Infrastructure systems}
@@ -166,7 +172,7 @@ breaklines=true
 	\end{itemize}
 	
 	\section{Functional Requirements}
-	The functional requirements are categorized into two sections:
+	The functional requirements are categorised into two sections:
 	\begin{itemize}
 		\item The requirements for the smart contract on the blockchain. This represents the rules and the protocol of the system.
 		\item The requirements for the client that interacts with the blockchain using the rules of the smart contract.
@@ -203,12 +209,12 @@ breaklines=true
 	\begin{itemize}
 		\item The system must be secure. Specifically, this means that:
 			\begin{itemize}
-				\item data in the blockchain cannot be modified in an unauthorized manner;
+				\item data in the blockchain cannot be modified in an unauthorised manner;
 				\item the integrity of data and attributes retrieved from the blockchain and off the blockchain must be verified by the client (such as the cryptographic hash of data stored off the blockchain and proof of ownership of cryptographic keys).
 			\end{itemize}
 		\item The system should be reliable. All actions of the smart contract can be performed regardless of the state of the system.
 		\item The client should be able to run on most common modern operating systems.
-		\item The financial cost of using the system resulting from blockchain transaction fees should be minimized.
+		\item The financial cost of using the system resulting from blockchain transaction fees should be minimised.
 	\end{itemize}
 	
 	\section{Specification}
@@ -253,11 +259,11 @@ breaklines=true
 	\begin{longtable}{|p{5.5cm}|p{5.5cm}|}
 		\hline
 		\textbf{Requirement} & \textbf{Specification} \\ \hline
-		Security: Data in the blockchain cannot be modified in an unauthorized manner. & This is enforced by the Ethereum protocol itself as miners validate all transactions before being included in blocks. \\ \hline
+		Security: Data in the blockchain cannot be modified in an unauthorised manner. & This is enforced by the Ethereum protocol itself as miners validate all transactions before being included in blocks. \\ \hline
 		Security: The integrity of data and attributes retrieved from the blockchain and off the blockchain must be verified by the client (such as the cryptographic hash of data stored off the blockchain and proof of ownership of cryptographic keys). & The client will check that the SHA256 hash of data stored off the blockchain matches with the published hash. When a PGP attribute is retrieved, the client will invoke the local GPG binary to verify the signature associated with the attribute data. \\ \hline
 		The system should be reliable. All actions of the smart contract can be performed regardless of the state of the system. & The smart contract will be implemented so that each attribute is stored independently of each other. This is also partly a condition of the Ethereum protocol itself as each smart contract has a state that is independent of other smart contracts. \\ \hline
 		The client should be able to run on most common modern operating systems. & The client will be implemented in Python, which is a cross-platform language. \\ \hline
-		The financial cost of using the system resulting from blockchain transaction fees should be minimized. & The smart contract will be implemented in a way that uses the least operations and stores the least data possible on the blockchain so that the gas price of each transaction is minimized. \\ \hline
+		The financial cost of using the system resulting from blockchain transaction fees should be minimised. & The smart contract will be implemented in a way that uses the least operations and stores the least data possible on the blockchain so that the gas price of each transaction is minimised. \\ \hline
 		The system should be scalable to many identities and attributes. & The Ethereum JSON RPC allows for events to be filtered by specified indexed parameters such attribute ID, attribute owner, etc. \\ \hline
 	\end{longtable}
 	
@@ -290,7 +296,7 @@ breaklines=true
 	
 	Statically typed smart contracts also allow for explicit control of sizes of data specified to contract methods and stored on the blockchain, which is useful for this particular project as the smart contract is intended for arbitrary types of data to specified for certain parameters and predictable types of data for other parameters.
 	
-	For example, the Serpent compiler command \code{serpent mk\_signature} shows that the Serpent compiler automatically sets variables to be of type \code{uint256} (integers of 256 bits) unless other explicitly stated. This would be inefficient for the storage of the cryptographic proof boolean flag specified in the project's smart contract specification, as the variable would be padded to 256 bits\cite{14}, therefore increasing the gas price of certain transactions in the system. One of the project's non-functional requirements is to minimize the financial cost of the system.
+	For example, the Serpent compiler command \code{serpent mk\_signature} shows that the Serpent compiler automatically sets variables to be of type \code{uint256} (integers of 256 bits) unless other explicitly stated. This would be inefficient for the storage of the cryptographic proof boolean flag specified in the project's smart contract specification, as the variable would be padded to 256 bits\cite{14}, therefore increasing the gas price of certain transactions in the system. One of the project's non-functional requirements is to minimise the financial cost of the system.
 	
 	It would therefore be advantageous to use a language where all types must be explicitly specified, because once a smart contract is published on the blockchain its code cannot be modified.
 	
@@ -481,7 +487,7 @@ breaklines=true
 	
 	The \textbf{transactions manager} is a singleton class that is responsible for sending transactions using Ethereum. It has methods for fulfilling the methods implemented in the smart contract, including adding attributes, signing attributes and revoking signatures.
 	
-	The reason for segmenting the two classes by receiving data and sending data from the Ethereum blockchain is because those two functions require inherently different initialization parameters. The events manager is only initialized by the address of the smart contract, and the transactions manager is initialized by the address of the smart contract and also an address belonging to the user.
+	The reason for segmenting the two classes by receiving data and sending data from the Ethereum blockchain is because those two functions require inherently different initialization parameters. The events manager is only initialised by the address of the smart contract, and the transactions manager is initialised by the address of the smart contract and also an address belonging to the user.
 	
 	This means the transactions manager requires the client machine to have access to private keys for signing, whereas the events manager is read-only and so does not need access to any private keys.
 	
@@ -491,7 +497,7 @@ breaklines=true
 	
 	\bigskip
 	\noindent \textbf{Singleton design pattern}\newline
-	A singleton design pattern was chosen for the classes because each method that interacts with Ethereum requires access to the Trustery \textbf{contract translator} (from the \textbf{pyethereum package}), which provides a programmatic interface to the smart contract ABI and requires initialization. It would be more efficient to initialize the contract translator once for all the methods, as some commands may require multiple calls to methods that interact with Ethereum.
+	A singleton design pattern was chosen for the classes because each method that interacts with Ethereum requires access to the Trustery \textbf{contract translator} (from the \textbf{pyethereum package}), which provides a programmatic interface to the smart contract ABI and requires initialization. It would be more efficient to initialise the contract translator once for all the methods, as some commands may require multiple calls to methods that interact with Ethereum.
 	
 	\bigskip
 	\noindent \textbf{Alternative design}\newline
@@ -506,9 +512,9 @@ breaklines=true
 	
 	The module will initiate a working connection with Ethereum's JSON RPC that can be used by the events and transactions managers. To achieve this, the \textbf{ethereum-rpc-client} Python package will be used as the HTTP client for the Ethereum JSON RPC server. The package implements a handful of methods exposed by the Ethereum JSON RPC server.\cite{18}
 	
-	This module is also responsible for keeping information about the smart contract itself for usage by the events and transactions managers, such as the smart contract ABI to initialize the contract translator with.
+	This module is also responsible for keeping information about the smart contract itself for usage by the events and transactions managers, such as the smart contract ABI to initialise the contract translator with.
 	
-	Finally, this module will also provide functions to deal with any encoding of data required before sending data off to the Ethereum JSON RPC server. This is intended to standardize the process of using the Ethereum JSON RPC by encoding all the data in a standard way, to prevent bugs caused by data mishandling.
+	Finally, this module will also provide functions to deal with any encoding of data required before sending data off to the Ethereum JSON RPC server. This is intended to standardise the process of using the Ethereum JSON RPC by encoding all the data in a standard way, to prevent bugs caused by data mishandling.
 	
 	\subsection{User Configuration Manager}
 	The \textbf{userconfig} module is responsible for managing any user state information, including the trust store.
@@ -712,7 +718,7 @@ Signatures for attribute ID #12:
 	
 	When using the command, the client automatically interacts with the local \textit{gpg} binary to export the public key specified by the user and use its private key to generate the cryptographic proof portion of the attribute.
 	
-	The cryptographic proof of the attribute is a PGP signature of the Ethereum address that the attribute is to be published from. This proves that the owner of the PGP key has "authorized" a binding between the PGP key to the Ethereum address.
+	The cryptographic proof of the attribute is a PGP signature of the Ethereum address that the attribute is to be published from. This proves that the owner of the PGP key has "authorised" a binding between the PGP key to the Ethereum address.
 	
 	The attribute data is a concatenation of the ASCII armour representative of the PGP key and the PGP signature, such as follows:
 	\begin{lstlisting}
@@ -781,7 +787,7 @@ Transaction sent.
 	\subsection{Inconsistent Ethereum Python API and Lack of Documentation}
 	One of the biggest issues in implementing the project on the Ethereum smart contract system was that the relatively young age of the Ethereum project meant that there was a massive lack of documentation. This was especially the case for the \textit{pyethereum} library.
 	
-	Fortunately, the source code for the \textit{pythereum} library is fairly well organized and readable, which meant that it was possible to understand the API methods by reading the code.
+	Fortunately, the source code for the \textit{pythereum} library is fairly well organised and readable, which meant that it was possible to understand the API methods by reading the code.
 	
 	However, one recurring issue was an inconsistency in the way data is represented, expected and returned across Ethereum APIs. For example data is returned from the Ethereum JSON RPC in hex format, but \textit{pyethereum} expects it in raw binary format for some parameters and in hex format for other parameters, which lead to a large amount of unintuitive data conversion in the client.
 	
@@ -814,18 +820,18 @@ Transaction sent.
 	
 	In particular, unit tests were developed for the code that verifies the proof for PGP attributes. This was achieved by generating attributes that produce different proof statuses (valid, invalid and unknown), and by saving dictionaries that represent these attributes (that the function for verifying proofs expects) in a file in \textit{pickle} format. \textit{Pickle} is a Python object serialization format.\footnote{https://docs.python.org/2/library/pickle.html}
 	
-	The unit tests can then read the files and deserialize the \textit{pickle} data for usage in tests.
+	The unit tests can then read the files and deserialise the \textit{pickle} data for usage in tests.
 	
 	\chapter{Evaluation}
 	\section{Project Aims}
-	The aim of this project was to create a system based on a smart contract on the Ethereum blockchain that enables users to manage identities and attributes associated with identities, including cryptographic keys. The system must be decentralized and allows users to sign and verify specific and fine-grained attributes of identities using a web-of-trust model.
+	The aim of this project was to create a system based on a smart contract on the Ethereum blockchain that enables users to manage identities and attributes associated with identities, including cryptographic keys. The system must be decentralised and allows users to sign and verify specific and fine-grained attributes of identities using a web-of-trust model.
 	
 	The aims of this project have been met for the following reasons:
 	\begin{itemize}
 		\item Users can manage identities as each Ethereum address represents an identity, and Ethereum addresses can be created by an Ethereum client and trusted or untrusted by the Trustery client.
 		\item Users can manage attributes associated with identities by adding and retrieving attributes.
 		\item Users can manage attributes representing cryptographic keys through the attribute's data field and signify that it has a cryptographic proof through the \textit{has\_proof} field.
-		\item The system is decentralized as it uses Ethereum blockchain for the storage of attributes, and optionally allows users to specify any HTTP or IPFS URI for attribute data.
+		\item The system is decentralised as it uses Ethereum blockchain for the storage of attributes, and optionally allows users to specify any HTTP or IPFS URI for attribute data.
 		\item Users can sign and verify specific attributes through the smart contract's sign method, and the client shows the signatures of attributes by identities when being retrieved to allow users to verify attributes.
 		\item The system uses a web-of-trust model as all users in the system can validly sign and verify other users' attributes.
 	\end{itemize}
@@ -843,7 +849,7 @@ Transaction sent.
 	\subsection{Security}
 	One of the non-functional requirements of the project was security. Specifically:
 	\begin{itemize}
-		\item Data in the blockchain cannot be modified in an unauthorized manner.
+		\item Data in the blockchain cannot be modified in an unauthorised manner.
 		\item The integrity of data and attributes retrieved from the blockchain and off the blockchain must be verified by the client (such as the cryptographic hash of data stored off the blockchain and proof of ownership of cryptographic keys).
 	\end{itemize}
 	
@@ -856,7 +862,7 @@ Transaction sent.
 	The second point relies on the security of the client. Attribute integrity has been implemented in the form of the \textit{datahash} parameter in attributes, and cryptographic proofs attached to the attribute's data. Cryptographic proof verification for PGP attributes is also tested with unit tests.
 	
 	\subsection{Reliability}
-	One of the project's requirements was that all actions of the smart contract can be performed regardless of the state of the system. The Ethereum system itself provides this reliability as its decentralized nature means that there is no central point of failure. Furthermore, by design smart contracts do not effect the state of other smart contracts unless a smart contract explicitly references another smart contract.
+	One of the project's requirements was that all actions of the smart contract can be performed regardless of the state of the system. The Ethereum system itself provides this reliability as its decentralised nature means that there is no central point of failure. Furthermore, by design smart contracts do not effect the state of other smart contracts unless a smart contract explicitly references another smart contract.
 	
 	\subsection{Cross-Platform}
 	One of the project's requirements was that the client should be able to run on most common modern operating systems.
@@ -880,7 +886,9 @@ Transaction sent.
 	In future iterations of this project, this can be addressed by also binding PGP key to the specific attribute and not just the Ethereum address, so that the owner of the identity can simply revoke a self-signature of the attribute.
 	
 	\subsection{Privacy}
-	The system is only suitable for the publishing of attributes that the user wishes to make public (such as degree awards). It is not suitable for the publishing of more private identity attributes such as personal address.
+	The system is only suitable for the publishing of attributes that the user wishes to make public (such as degree awards). It is not suitable for the publishing of more private identity attributes such as personal address as all attributes can be viewed by anyone in the system and there is no access control.
+	
+	Future iterations of this project may address this by adding functionality to publish "zero-knowledge" attributes for verification of privately shared data that the user distributes and has control over.
 	
 	\chapter{Professional Issues}
 	
