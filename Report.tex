@@ -46,7 +46,7 @@ breaklines=true
 \begin{document}
 	\begin{titlepage}
 		\centering
-		{\huge\bfseries Trustery: An Identity System Based on Smart Contracts on the Blockchain\par}
+		{\huge\bfseries Trustery: A Public Key Infrastructure and Identity System Based on Smart Contracts on the Blockchain\par}
 		\vspace{1cm}
 		{\Large\scshape Final Project Report\par}
 		\vspace{1.5cm}
@@ -132,6 +132,15 @@ breaklines=true
 	
 	One such blockchain-based system for smart contracts is Ethereum. The Ethereum white paper describes smart contracts as "complex applications involving having digital assets being directly controlled by a piece of code implementing arbitrary rules".\cite{3}
 	
+	The Ethereum white paper specifies several potential applications for the use of smart contracts such as:
+	\begin{itemize}
+		\item Token systems representing assets such as company stocks or gold.
+		\item Decentralized marketplaces.
+		\item Decentralized file storage.
+	\end{itemize}
+	
+	One of the other potential applications discussed in the white paper relating to this project is identity and reputation systems. For example, a smart contract can be created for mapping domain names to IP addresses to provide a decentralized domain name registration system. Namecoin is an example of such a system that uses a Bitcoin-like blockchain.\footnote{http://namecoin.org/}
+	
 	\section{Public Key Infrastructure}
 	\subsection{Certificate Authorities}
 	\subsection{Web of Trust}
@@ -200,7 +209,6 @@ breaklines=true
 		\item The system should be reliable. All actions of the smart contract can be performed regardless of the state of the system.
 		\item The client should be able to run on most common modern operating systems.
 		\item The financial cost of using the system resulting from blockchain transaction fees should be minimized.
-		\item The system should be scalable to many identities and attributes.
 	\end{itemize}
 	
 	\section{Specification}
@@ -520,7 +528,7 @@ breaklines=true
 	Using this design, adding and removing identities from the trust store is are operations that both take \textit{O(1)} time, as adding and removing variables require no iterative computation.
 	
 	\subsection{IPFS Interaction}
-	The \textbf{ipfs-api} Python package provides IPFS API bindings for Python\cite{20}. Using this package, pytrustery can easily upload and retrieve files to the IPFS network.
+	The \textbf{ipfs-api} Python package provides IPFS API bindings for Python\cite{20}. Using this package, pytrustery can easily upload and retrieve data to the IPFS network.
 	
 	The package acts as a HTTP client to communicate with the local IPFS node using its HTTP API.
 	
@@ -809,14 +817,82 @@ Transaction sent.
 	The unit tests can then read the files and deserialize the \textit{pickle} data for usage in tests.
 	
 	\chapter{Evaluation}
+	\section{Project Aims}
+	The aim of this project was to create a system based on a smart contract on the Ethereum blockchain that enables users to manage identities and attributes associated with identities, including cryptographic keys. The system must be decentralized and allows users to sign and verify specific and fine-grained attributes of identities using a web-of-trust model.
+	
+	The aims of this project have been met for the following reasons:
+	\begin{itemize}
+		\item Users can manage identities as each Ethereum address represents an identity, and Ethereum addresses can be created by an Ethereum client and trusted or untrusted by the Trustery client.
+		\item Users can manage attributes associated with identities by adding and retrieving attributes.
+		\item Users can manage attributes representing cryptographic keys through the attribute's data field and signify that it has a cryptographic proof through the \textit{has\_proof} field.
+		\item The system is decentralized as it uses Ethereum blockchain for the storage of attributes, and optionally allows users to specify any HTTP or IPFS URI for attribute data.
+		\item Users can sign and verify specific attributes through the smart contract's sign method, and the client shows the signatures of attributes by identities when being retrieved to allow users to verify attributes.
+		\item The system uses a web-of-trust model as all users in the system can validly sign and verify other users' attributes.
+	\end{itemize}
+	\section{Functional Requirements}
+	All of the functional requirements laid out in the specification of the project have been objectively met.
+	
+	The smart contract was implemented in Solidity and the code objectively satisfies all of the functional requirements.
+	
+	The client was implemented in Python and the code also objectively satisfies all of the functional requirements.
+	
+	The requirements were implemented according to the specification.
+	\section{Non-functional Requirements}
+	The non-functional requirements that were set out in the design will be evaluated in this section.
+	
+	\subsection{Security}
+	One of the non-functional requirements of the project was security. Specifically:
+	\begin{itemize}
+		\item Data in the blockchain cannot be modified in an unauthorized manner.
+		\item The integrity of data and attributes retrieved from the blockchain and off the blockchain must be verified by the client (such as the cryptographic hash of data stored off the blockchain and proof of ownership of cryptographic keys).
+	\end{itemize}
+	
+	The first point relies on the Ethereum system being secure, which is outside the scope of the project. This project makes the assumption that Ethereum is free from significant security flaws.
+	
+	Despite this, it is worth analysing the security of Ethereum. One of the main concerns of Ethereum is that if a security issue is discovered in the code that executes EVM code then it may be possible to take control over the Ethereum network or break the rules of a smart contract by broadcasting a transaction that contains malicious EVM code.
+	
+	This concern can be addressed by the fact that there are at least eight different Ethereum implementations of the Ethereum Virtual Machine in at least seven different programming languages.\footnote{https://github.com/ethereum/cpp-ethereum}\footnote{https://github.com/ethereum/go-ethereum}\footnote{https://github.com/ethereum/ethereumj}\footnote{https://github.com/ethereum/pyethereum}\footnote{https://github.com/ethereumjs/ethereumjs-vm}\footnote{https://github.com/bkirwi/ethereum-haskell}\footnote{https://github.com/jamshidh/ethereum-client-haskell}\footnote{https://github.com/Nethereum/Nethereum} This means that if a security flaw is found in one of the implementations, as long as the implementation is not used by more than 51\% of the network then it should not be possible to "break the rules" of the network.
+	
+	The second point relies on the security of the client. Attribute integrity has been implemented in the form of the \textit{datahash} parameter in attributes, and cryptographic proofs attached to the attribute's data. Cryptographic proof verification for PGP attributes is also tested with unit tests.
+	
+	\subsection{Reliability}
+	One of the project's requirements was that all actions of the smart contract can be performed regardless of the state of the system. The Ethereum system itself provides this reliability as its decentralized nature means that there is no central point of failure. Furthermore, by design smart contracts do not effect the state of other smart contracts unless a smart contract explicitly references another smart contract.
+	
+	\subsection{Cross-Platform}
+	One of the project's requirements was that the client should be able to run on most common modern operating systems.
+	
+	This has been objectively achieved as the client is written in Python, which is a cross-platform non-compiled programming language with implementations for Linux, Windows and Mac.\cite{25}
+	
+	\subsection{Cost Efficiency}
+	
+	\section{Alternative Cost-Efficient Smart Contract Design}
+	\section{Limitations}
+	\subsection{Adaptability}
+	The design of the system is such that all parties referenced by the system must already use the system. For example, if a university wants to issue a degree to an user in the system, the user must first add a degree attribute to their identity before the university can sign it. This increases the adoption barrier for the system.
+	
+	However, the upside to this is that the user has control over what attributes are or are not attached to their identity.
+	
+	\subsection{PGP Cryptographic Proof Binding}
+	Currently, when the user produces a PGP signature to attach to a PGP attribute to prove that a PGP key binds to an Ethereum address, this binding from the PGP attribute to the Ethereum address has no expiration date or revocation mechanism within the smart contract.
+	
+	This is a problem if for example the private key for the Ethereum address is compromised as users that trust the PGP key bound to the Ethereum address can also trust the identity of the Ethereum address.
+	
+	In future iterations of this project, this can be addressed by also binding PGP key to the specific attribute and not just the Ethereum address, so that the owner of the identity can simply revoke a self-signature of the attribute.
+	
+	\subsection{Privacy}
+	The system is only suitable for the publishing of attributes that the user wishes to make public (such as degree awards). It is not suitable for the publishing of more private identity attributes such as personal address.
+	
+	\chapter{Professional Issues}
 	
 	\chapter{Conclusion}
+	\subsection{Application of Work in New Areas}
 	
 	\bibliographystyle{IEEEtran}
 	\bibliography{6ccs3prj}
 	
 	\appendix
-	\chapter{Smart Contract Code}
+	\chapter{Smart Contracts}
+	\section{Main Smart Contract}
 	\begin{lstlisting}
 contract Trustery {
     struct Attribute {
@@ -872,6 +948,42 @@ contract Trustery {
             revocationID = revocations.length++;
             Revocation revocation = revocations[revocationID];
             revocation.signatureID = signatureID;
+            SignatureRevoked(revocationID, signatureID);
+        }
+    }
+}
+	\end{lstlisting}
+
+	\section{Alternative Smart Contract}
+	\begin{lstlisting}
+contract Trustery {
+    struct Signature {
+        address signer;
+    }
+
+    uint public attributes;
+    Signature[] public signatures;
+    uint public revocations;
+
+    event AttributeAdded(uint indexed attributeID, address indexed owner, string attributeType, bool has_proof, bytes32 indexed identifier, string data, string datahash);
+    event AttributeSigned(uint indexed signatureID, address indexed signer, uint indexed attributeID, uint expiry);
+    event SignatureRevoked(uint indexed revocationID, uint indexed signatureID);
+
+    function addAttribute(string attributeType, bool has_proof, bytes32 identifier, string data, string datahash) returns (uint attributeID) {
+        attributeID = attributes++;
+        AttributeAdded(attributeID, msg.sender, attributeType, has_proof, identifier, data, datahash);
+    }
+
+    function signAttribute(uint attributeID, uint expiry) returns (uint signatureID) {
+        signatureID = signatures.length++;
+        Signature signature = signatures[signatureID];
+        signature.signer = msg.sender;
+        AttributeSigned(signatureID, msg.sender, attributeID, expiry);
+    }
+
+    function revokeSignature(uint signatureID) returns (uint revocationID) {
+        if (signatures[signatureID].signer == msg.sender) {
+            revocationID = revocations++;
             SignatureRevoked(revocationID, signatureID);
         }
     }
