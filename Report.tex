@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper]{report}
+\documentclass[12pt]{report}
 \ifx\pdftexversion\undefined
 	\usepackage[dvips]{graphicx}
 \else
@@ -82,7 +82,7 @@ breaklines=true
 	The motivation for this project to build an identity system based on smart contracts on the blockchain arises from two problems, outlined in this section.
 	
 	\subsection{Centralisation and Security Weaknesses of Public Key Infrastructure}
-	The secure operation of SSL/TLS relies on a set of trusted Certificate Authorities (CAs) to authenticate public keys\cite{1}. In practice, the set of trusted CAs are bundled into operating systems and web browsers. Therefore, the Public Key Infrastructure (PKI) is centralised as only CAs chosen by operating system and web browser vendors may issue globally valid certificates.
+	The secure operation of SSL/TLS relies on a set of trusted Certificate Authorities (CAs) to authenticate public keys\cite{1}. In practice, the set of trusted CAs are bundled into operating systems and web browsers.\cite{27} Therefore, the Public Key Infrastructure (PKI) is centralised as only CAs chosen by operating system and web browser vendors may issue globally valid certificates.
 
 	This system is exclusive; it is expensive and time-consuming to convince operating system and web browser vendors to bundle a CA, therefore entities must usually pay CAs to sign their public keys. For example, it typically takes over 11 months to apply for root CA inclusion in Mozilla products\cite{6}.
 	 
@@ -146,7 +146,17 @@ breaklines=true
 	The primary proposition of this project is to write such a smart contract with functionality for the operation of a public key infrastructure and identity management system, where public keys and identity attributes are stored on the blockchain and can be managed by the smart contract.
 	
 	\section{Public Key Infrastructure}
-		
+	Public Key Infrastructure (PKI) is a term used to refer to the technical mechanisms, procedures and policies that provide a framework for creating, managing, distributing, using, storing and revoking digital certificates for the usage of public-key encryption.\cite{26}\cite{27}
+	
+	Public-key cryptography is a fundamental element of a PKI, and facilitates secure Internet communications between senders and receivers of communications, such as during Internet banking or online transactions.
+	
+	However, it is necessary for a sender or receiver to validate the other party's key in order to make sure that the correct key is being presented and a third party man-in-the-middle attacker is not for example presenting a false key in order decrypt communications.
+	
+	Digital certificates are files that contain information to validate the identity of the sender of some data, and are issued by certificate authorities.
+	
+	A digital certificate contains a public key along with other information such as the certificate's expiry date and the owner's name. The common standard for PKI certificates is X.509.\cite{28}
+	
+	The appendix of X.509 standard reference specifies a long list of potential attributes for certificates, such as organization name, locality name, postal code and email address. This allows for a broad range of identities to be defined by certificates.
 	
 	\subsection{Certificate Authorities}
 	\subsection{Web of Trust}
@@ -223,7 +233,7 @@ breaklines=true
 	\subsection{Smart Contract}
 	The smart contract is to be written in Solidity, a programming language for writing Ethereum smart contracts.
 	
-	\noindent \begin{longtable}{|p{5.5cm}|p{5.5cm}|}
+	\noindent \begin{longtable}{|p{6cm}|p{6cm}|}
 		\hline
 		\textbf{Requirement} & \textbf{Specification} \\ \hline
 		Entities can publish attributes about themselves (their identity) on the blockchain. & Identities are represented by Ethereum addresses. The smart contract will have an \textit{add attribute} transaction which will generate an \textit{add attribute} event with a unique attribute ID. \\ \hline
@@ -238,7 +248,7 @@ breaklines=true
 	\subsection{Client}
 	The client is to be implemented as a command-line text-based console application written in Python.
 	
-	\noindent \begin{longtable}{|p{5.5cm}|p{5.5cm}|}
+	\noindent \begin{longtable}{|p{6cm}|p{6cm}|}
 		\hline
 		\textbf{Requirement} & \textbf{Specification} \\ \hline
 		All of the actions that the smart contract allows can be performed by the client. & There will be console commands for adding attributes, signing attributes and revoking signatures. The commands will take input from the user and form the parameters for each transaction, and communicate with the Ethereum JSON RPC to send the transactions. \\ \hline
@@ -256,7 +266,7 @@ breaklines=true
 	\end{longtable}
 	
 	\subsection{Non-functional Requirements}	
-	\begin{longtable}{|p{5.5cm}|p{5.5cm}|}
+	\begin{longtable}{|p{6cm}|p{6cm}|}
 		\hline
 		\textbf{Requirement} & \textbf{Specification} \\ \hline
 		Security: Data in the blockchain cannot be modified in an unauthorised manner. & This is enforced by the Ethereum protocol itself as miners validate all transactions before being included in blocks. \\ \hline
@@ -569,7 +579,7 @@ breaklines=true
 	Git was used as a version management system for the project's source code. This was used in case any changes in the code had to be rolled back, although there has not been any need for this during the development of the project.
 	
 	\section{Smart Contract}
-	The smart contract was implemented in Solidity in the way that is described in the \textit{Design} chapter of the report. The full code of the smart contract is attached to the report in \textit{Appendix A}.
+	The smart contract was implemented in Solidity in the way that is described in the \textit{Design} chapter of the report. The full code of the smart contract is attached to the report in \textit{Appendix A.1}.
 	
 	The smart contract implementation is very few lines of code compared to the client implementation, but the smart contract is of equal if not greater importance to the project's implementation as it defines the functionality of the system.
 	
