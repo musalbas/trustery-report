@@ -117,7 +117,7 @@ breaklines=true
 	
 	\chapter{Background review}
 	\section{Blockchain}
-	The	concept of the blockchain was introduced in 2008 by Satoshi Nakamoto in the Bitcoin electronic cash system.\cite{9} Bitcoin is designed as a peer-to-peer network where nodes running the Bitcoin software relay transactions to other nodes. To prevent cash from being double spent, the network reaches a consensus on the ordering of transactions by recording them on the blockchain; the Bitcoin paper describes a process of timestamping transactions by "hashing them into an ongoing chain of hash-based proof-of-work, forming a record that cannot be changed without redoing the proof-of-work".
+	The	concept of the blockchain was introduced in 2008 by Satoshi Nakamoto in the Bitcoin electronic cash system.\cite{9} Bitcoin is designed as a peer-to-peer network where nodes running the Bitcoin software relay transactions to other nodes. To prevent cash from being double spent, the network reaches a consensus on the ordering of transactions by recording them on the blockchain; the Bitcoin paper describes a process of timestamping transactions by ``hashing them into an ongoing chain of hash-based proof-of-work, forming a record that cannot be changed without redoing the proof-of-work''.
 	
 	In the Bitcoin network the proof-of-work involves repeatedly hashing blocks of incoming transactions until a hash is found that begins with a certain number of zero bits. This requires CPU power, and so as long as the majority of the CPU power on the network is not controlled by a central authority, a central authority cannot modify the blockchain and reverse transactions. This is because the consensus rule of the network is such that the blockchain with the biggest number of blocks is the correct one, and so an authority that does not have the majority of the network's CPU power is unlikely to outpace the creation of blocks of the rest of the network.
 	
@@ -126,11 +126,11 @@ breaklines=true
 	The idea of this project is therefore to exploit the decentralised data storage and consensus capabilities of the blockchain to store identities and keys for a public key infrastructure, rather than transactions for a cash system.
 	
 	\subsection{Smart Contracts and Ethereum}
-	Each Bitcoin transaction references other transactions (called inputs) and creates outputs, which are recorded on the Bitcoin blockchain. The Bitcoin in these outputs can then be "spent" by other transactions. To facilitate the creation of transactions, Bitcoin has a transaction scripting language that is used to specify "locking scripts" for specifying conditions that must be met to spend transaction outputs.\cite{10}
+	Each Bitcoin transaction references other transactions (called inputs) and creates outputs, which are recorded on the Bitcoin blockchain. The Bitcoin in these outputs can then be ``spent'' by other transactions. To facilitate the creation of transactions, Bitcoin has a transaction scripting language that is used to specify ``locking scripts'' for specifying conditions that must be met to spend transaction outputs.\cite{10}
 	
-	Since the invention of Bitcoin, other forms of blockchain-based systems have emerged that extend the scripting language beyond the purpose of a cash system, to allow for other types of applications to be expressed on the blockchain in the form of "smart contracts". 
+	Since the invention of Bitcoin, other forms of blockchain-based systems have emerged that extend the scripting language beyond the purpose of a cash system, to allow for other types of applications to be expressed on the blockchain in the form of ``smart contracts''. 
 	
-	One such blockchain-based system for smart contracts is Ethereum. The Ethereum white paper describes smart contracts as "complex applications involving having digital assets being directly controlled by a piece of code implementing arbitrary rules".\cite{3}
+	One such blockchain-based system for smart contracts is Ethereum. The Ethereum white paper describes smart contracts as ``complex applications involving having digital assets being directly controlled by a piece of code implementing arbitrary rules''.\cite{3}
 	
 	The Ethereum white paper specifies several potential applications for the use of smart contracts such as:
 	\begin{itemize}
@@ -728,7 +728,7 @@ Signatures for attribute ID #12:
 	
 	When using the command, the client automatically interacts with the local \textit{gpg} binary to export the public key specified by the user and use its private key to generate the cryptographic proof portion of the attribute.
 	
-	The cryptographic proof of the attribute is a PGP signature of the Ethereum address that the attribute is to be published from. This proves that the owner of the PGP key has "authorised" a binding between the PGP key to the Ethereum address.
+	The cryptographic proof of the attribute is a PGP signature of the Ethereum address that the attribute is to be published from. This proves that the owner of the PGP key has ``authorised'' a binding between the PGP key to the Ethereum address.
 	
 	The attribute data is a concatenation of the ASCII armour representative of the PGP key and the PGP signature, such as follows:
 	\begin{lstlisting}
@@ -867,7 +867,7 @@ Transaction sent.
 	
 	Despite this, it is worth analysing the security of Ethereum. One of the main concerns of Ethereum is that if a security issue is discovered in the code that executes EVM code then it may be possible to take control over the Ethereum network or break the rules of a smart contract by broadcasting a transaction that contains malicious EVM code.
 	
-	This concern can be addressed by the fact that there are at least eight different Ethereum implementations of the Ethereum Virtual Machine in at least seven different programming languages.\footnote{https://github.com/ethereum/cpp-ethereum}\footnote{https://github.com/ethereum/go-ethereum}\footnote{https://github.com/ethereum/ethereumj}\footnote{https://github.com/ethereum/pyethereum}\footnote{https://github.com/ethereumjs/ethereumjs-vm}\footnote{https://github.com/bkirwi/ethereum-haskell}\footnote{https://github.com/jamshidh/ethereum-client-haskell}\footnote{https://github.com/Nethereum/Nethereum} This means that if a security flaw is found in one of the implementations, as long as the implementation is not used by more than 51\% of the network then it should not be possible to "break the rules" of the network.
+	This concern can be addressed by the fact that there are at least eight different Ethereum implementations of the Ethereum Virtual Machine in at least seven different programming languages.\footnote{https://github.com/ethereum/cpp-ethereum}\footnote{https://github.com/ethereum/go-ethereum}\footnote{https://github.com/ethereum/ethereumj}\footnote{https://github.com/ethereum/pyethereum}\footnote{https://github.com/ethereumjs/ethereumjs-vm}\footnote{https://github.com/bkirwi/ethereum-haskell}\footnote{https://github.com/jamshidh/ethereum-client-haskell}\footnote{https://github.com/Nethereum/Nethereum} This means that if a security flaw is found in one of the implementations, as long as the implementation is not used by more than 51\% of the network then it should not be possible to ``break the rules'' of the network.
 	
 	The second point relies on the security of the client. Attribute integrity has been implemented in the form of the \textit{datahash} parameter in attributes, and cryptographic proofs attached to the attribute's data. Cryptographic proof verification for PGP attributes is also tested with unit tests.
 	
@@ -898,7 +898,7 @@ Transaction sent.
 	\subsection{Privacy}
 	The system is only suitable for the publishing of attributes that the user wishes to make public (such as degree awards). It is not suitable for the publishing of more private identity attributes such as personal address as all attributes can be viewed by anyone in the system and there is no access control.
 	
-	Future iterations of this project may address this by adding functionality to publish "zero-knowledge" attributes for verification of privately shared data that the user distributes and has control over.
+	Future iterations of this project may address this by adding functionality to publish ``zero-knowledge'' attributes for verification of privately shared data that the user distributes and has control over.
 	
 	\chapter{Professional Issues}
 	
