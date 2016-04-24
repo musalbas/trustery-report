@@ -58,11 +58,15 @@ breaklines=true
 	\end{titlepage}
 	
 	\begin{abstract}
-		test
+		The Public Key Infrastructure (PKI) in use today on the Internet to secure communications has several drawbacks arising from its centralized and non-transparent design. In practice, a vendor-specified set of trusted certificate authorities is bundled with operating systems and browsers. In the past there has been instances of certificate authorities publishing rogue certificates for targeted attacks, and this has been difficult to immediately detect as certificate authorities are not transparent about the certificates they issue. Furthermore, the centralized picking of trusted certificate authorities means that it is not practical to untrust certificate authorities that have issued rogue certificates, as this would disrupt the SSL process for many other hosts.
+		
+		This project proposes an alternative PKI system based on a decentralized and transparent design using a web-of-trust model and smart contracts on the Ethereum blockchain, to make it easily possible for rogue certificates to be detected when they are published. The web-of-trust model is designed such that an entity or authority in the system can verify (or vouch for) fine-grained attributes of another entity's identity (such as company name or domain name), as an alternative to the centralized certificate authority identity verification model.
 	\end{abstract}
 	
 	\begin{acknowledgements}
-		test
+		I would like to thank Martin Chapman and Peter McBurney for supervising this project, and George Danezis for offering feedback.
+		
+		I would also like to thank Secure Trading for supporting this project.
 	\end{acknowledgements}
 	
 	\begin{originality}
