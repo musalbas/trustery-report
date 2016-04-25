@@ -163,8 +163,38 @@ breaklines=true
 	The appendix of X.509 standard reference specifies a long list of potential attributes for certificates, such as organization name, locality name, postal code and email address. This allows for a broad range of identities to be defined by certificates.
 	
 	\subsection{Certificate Authorities}
+	A certificate authority is a trusted issuer of digital certificates. Some certificate authorities are corporate departments, external companies or governmental organizations.
+	
+	The main purpose of a certificate authority is to validate the identity of the organization or individual requesting the certificate and carry out detailed checks to ensure that the fields in the certificate are factually true.\cite{27}
+
+	For example, there exists several types of certificates that have different types of validation:\cite{29}
+	\begin{itemize}
+		\item Extended validation SSL certificates - the certificate authority checks that the applicant controls the domain name in the certificate and conducts a \textit{thorough} vetting of the organization.
+		\item Organization validation SSL certificates - the certificate authority checks that the applicant controls the domain name in the certificate and conducts \textit{some} vetting of the organization.
+		\item Domain validation SSL certificates - the certificate authority only checks that the applicant controls the domain name in the certificate.
+	\end{itemize}
+	
+	The checks performed on the certificate correspond to the attributes in the X.509 certificate that the certificate authority sign. The certificate authority signs the entire certificate and all its fields.
+	
+	This project proposes an alternative to this where an entity can choose to only sign specific attributes about another entity and not all of them. The idea behind this is to ``crowdsource'' the identity validation process by allowing different entities that can vouch for specific attributes of other entities to do so without having to vouch for all of the other attributes.
+	
+	For example, the university degree attribute for an individual can be signed by a trusted university degree awarding body, and the driving license attribute can be signed by a governmental driving license awarding body.
+	
 	\subsection{Web of Trust}
-	\section{Alternative Identity and Public Key Infrastructure systems}
+	An alternative to the centralized chain of trust certificate authority model of PKI is the \textit{web of trust}.
+	
+	The concept of the web of trust was first described in 1992 in the manual for PGP 2.0:
+	
+	``As time goes on, you will accumulate keys from other people that you may want to designate as trusted introducers. Everyone else will each choose their own trusted introducers. And everyone will gradually accumulate and distribute with their key a collection of certifying signatures from other people, with the expectation that anyone receiving it will trust at least one or two of the signatures. This will cause the emergence of a decentralized fault-tolerant web of confidence for all public keys.''
+	
+	In a web of trust, there are no certificate authorities in the same sense as X.509 PKI. Instead any user of the system can sign each other's public key, which means that there is no certificate authority in the system that is ``too big to fail'' as public keys are by design intended to have multiple signatures. This means that if one signer is compromised and the signer's key is revoked, the impact on the trust network is limited.
+	
+	\section{Alternative Public Key Infrastructure: KeyChains}
+	KeyChains is paper that describes a design for a decentralized public key infrastructure inspired by PGP's web of trust. It uses a distributed web of trust stored amongst a network of peers. Its PKI is built on top of the Local Minima Search protocol for efficient storage and retrieval of web of trust data over a network. KeyChains is specifically tailored to the task of discovering and retrieving certificate chains and not only public keys.\cite{30}
+	
+	The design is novel, and this project draws on some of KeyChains' ideas. However, the Trustery project is tailored towards the problem of fined-grained identity management within a decentralized PKI and certificate transparency gains through the use of the blockchain.
+	
+	KeyChains uses its own storage network that does not have the transparency gains of the blockchain. For example, one of the attacks against KeyChains described in the paper is the ability for a peer to return a certificate chain different from the certificate chain that KeyChains would normally return.
 	
 	\chapter{Requirements \& Specification}
 	\section{Brief}
@@ -883,31 +913,113 @@ Transaction sent.
 	
 	This has been objectively achieved as the client is written in Python, which is a cross-platform non-compiled programming language with implementations for Linux, Windows and Mac.\cite{25}
 	
-	\subsection{Cost Efficiency}
+	\subsection{Cost Minimisation}
+	One of the project's requirements was that the financial cost of using the system resulting from blockchain transaction fees should be minimised.
+	
+	This has been achieved in practice by keeping the lines of code in the smart contract to a minimum and adding the ability to store data off-blockchain using protocols such as IPFS in order to reduce the gas cost of transactions.
+	
+	Below is a table that shows the gas used for adding attributes for varying sizes of the attribute data field. In the test, all other attribute fields have been filled with contents of 1 byte. The gas in USD is calculated using Ether.Fund's transaction cost calculator\footnote{http://ether.fund/tool/calculator}, which is pegged to the price of Bitcoin. The values are calculated as of the 25th of April 2015 where 1 Bitcoin is valued at \$464.30.
+	
+	\begin{longtable}{|p{2.3cm}|p{2.3cm}|p{2.3cm}|p{2.3cm}|p{2.4cm}|}
+		\hline
+		\textbf{Data (bytes)} & \textbf{Gas} & \textbf{Gas in USD} & \textbf{Gas (IPFS)} & \textbf{Gas in USD (IPFS)} \\ \hline
+		100 & 213782 & \$0.49 & 170215 & \$0.39 \\ \hline
+		200 & 281595 & \$0.65 & 170215 & \$0.39 \\ \hline
+		300 & 349473 & \$0.81 & 170215 & \$0.39 \\ \hline
+		400 & 417287 & \$0.96 & 170215 & \$0.39 \\ \hline
+		500 & 485037 & \$1.12 & 170215 & \$0.39 \\ \hline
+		\caption{Gas used for adding attributes.}
+	\end{longtable}
+	
+	The table above shows that the gas cost is the same for IPFS attributes regardless of the size of the attribute data. This is because IPFS URIs are always the same size regardless of the size of the data represented by them. Furthermore, the table above shows that the gas cost of adding attributes increases linearly with the attribute data (roughly by \$0.16 per 100 bytes).
 	
 	\section{Alternative Cost-Efficient Smart Contract Design}
-	\section{Limitations}
-	\subsection{Adaptability}
+	Using an alternative smart contract design that does not store unnecessary attribute data in arrays in the smart contract, it is possible to achieve a more cost-efficient design.
+	
+	The core operation of the system and the client is unhindered by this change as the client only makes use of emitted events by the smart contract to retrieve data. However, this change would mean that other smart contracts on the blockchain that reference the Trustey smart contract would be unable to access attribute, signature and revocation data directly from the smart contract's array variables, which limits the possibilities of use cases for the system.
+	
+	As an example, the following method for signing an attribute...
+	\begin{lstlisting}
+function signAttribute(uint attributeID, uint expiry) returns (uint signatureID) {
+    signatureID = signatures.length++;
+    Signature signature = signatures[signatureID];
+    signature.signer = msg.sender;
+    signature.attributeID = attributeID;
+    signature.expiry = expiry;
+    AttributeSigned(signatureID, msg.sender, attributeID, expiry);
+}
+	\end{lstlisting}
+	
+	...can be replaced with the following method:
+	\begin{lstlisting}
+function signAttribute(uint attributeID, uint expiry) returns (uint signatureID) {
+    signatureID = signatures.length++;
+    Signature signature = signatures[signatureID];
+    signature.signer = msg.sender;
+    AttributeSigned(signatureID, msg.sender, attributeID, expiry);
+}
+	\end{lstlisting}
+	
+	The full code for the alternative smart contract can be found in \textit{Appendix A.2}.
+	
+	\begin{longtable}{|p{2.3cm}|p{2.3cm}|p{2.3cm}|p{2.3cm}|p{2.4cm}|}
+		\hline
+		\textbf{Data (bytes)} & \textbf{Gas} & \textbf{Gas in USD} & \textbf{Gas (IPFS)} & \textbf{Gas in USD (IPFS)} \\ \hline
+		100 & 41789 & \$0.10 & 38372 & \$0.09 \\ \hline
+		200 & 49377 & \$0.11 & 38372 & \$0.09 \\ \hline
+		300 & 57030 & \$0.13 & 38372 & \$0.09 \\ \hline
+		400 & 64619 & \$0.15 & 38372 & \$0.09 \\ \hline
+		500 & 72144 & \$0.17 & 38372 & \$0.09 \\ \hline
+		\caption{Gas used for adding attributes in the alternative smart contract.}
+	\end{longtable}
+	
+	The table above shows that there are significant cost benefits for the alternative design. All transactions are cheaper that the corresponding transactions for the original smart contract design. Transactions are at minimum 77\% cheaper (the lowest gain is for IPFS transactions).
+	
+	\chapter{Professional Issues}
+	Care has been taken to abide by the Code of Conduct issued by the British Computing Society (BCS).\footnote{http://www.bcs.org/upload/pdf/conduct.pdf}
+	
+	The primary issue of relevance to this project is intellectual property. This project makes use of many third party libraries, all of which are released under an open source license on the Python Package Index\footnote{https://pypi.python.org/pypi} and are permitted for usage in this project.
+	
+	In addition to this, as part of this project's implementation, minor contributions have been made to one of the third party libraries used, \textit{pyethereum}, on its project page on GitHub.\footnote{https://github.com/ethereum/pyethereum/pull/310}\footnote{https://github.com/ethereum/pyethereum/issues/309}
+	
+	Other relevant professional issues such as security and privacy have been discussed in other sections of this report, including \textit{Design} and \textit{Evaluation}.
+	
+	\chapter{Conclusion}
+	This project set out to realise a decentralized public key infrastructure system that is utilizes the transparency of the blockchain and has fine-grained attribute management for the web of trust.
+	
+	This has been achieved in the form of a smart contract and a command-line client for using the smart contract.
+	
+	As the Internet scales, rogue certificate attacks become more common, and organizations demand more forgery-proof identity verification techniques, the need for this type of public key infrastructure system will increase.
+	
+	\subsection{Related Problems and Applying the Work in New Areas}
+	Although this project has so far focused on identity in the context of public key infrastructure, we are likely to see similar systems being proposed and implemented in many different economic settings.
+	
+	Companies and financial institutions today face a large burden when it comes to anti-fraud and anti money laundering processes. By using the transparency of the blockchain it is possible to produce verifiable documents for identity verification and compliance.
+	
+	In some industries such as the diamond industry, document forgery is an expensive problem. Everledger is a company that is utilising the blockchain to enable the diamond industry to verify the authenticity and certification of diamonds.\footnote{http://www.everledger.io/}
+	
+	Provenance is a company that takes this concept further and channels the blockchain for the purposes of identifying and verifying the supply chain for products.\footnote{https://www.provenance.org/}
+	
+	\subsection{Limitations and Future Work}
+	\bigskip
+	\noindent \textbf{Adaptability}\newline
 	The design of the system is such that all parties referenced by the system must already use the system. For example, if a university wants to issue a degree to an user in the system, the user must first add a degree attribute to their identity before the university can sign it. This increases the adoption barrier for the system.
 	
 	However, the upside to this is that the user has control over what attributes are or are not attached to their identity.
 	
-	\subsection{PGP Cryptographic Proof Binding}
+	\bigskip
+	\noindent \textbf{PGP Cryptographic Proof Binding}\newline
 	Currently, when the user produces a PGP signature to attach to a PGP attribute to prove that a PGP key binds to an Ethereum address, this binding from the PGP attribute to the Ethereum address has no expiration date or revocation mechanism within the smart contract.
 	
 	This is a problem if for example the private key for the Ethereum address is compromised as users that trust the PGP key bound to the Ethereum address can also trust the identity of the Ethereum address.
 	
 	In future iterations of this project, this can be addressed by also binding PGP key to the specific attribute and not just the Ethereum address, so that the owner of the identity can simply revoke a self-signature of the attribute.
 	
-	\subsection{Privacy}
+	\bigskip
+	\noindent \textbf{Privacy}\newline
 	The system is only suitable for the publishing of attributes that the user wishes to make public (such as degree awards). It is not suitable for the publishing of more private identity attributes such as personal address as all attributes can be viewed by anyone in the system and there is no access control.
 	
 	Future iterations of this project may address this by adding functionality to publish ``zero-knowledge'' attributes for verification of privately shared data that the user distributes and has control over.
-	
-	\chapter{Professional Issues}
-	
-	\chapter{Conclusion}
-	\subsection{Application of Work in New Areas}
 	
 	\bibliographystyle{IEEEtran}
 	\bibliography{6ccs3prj}
